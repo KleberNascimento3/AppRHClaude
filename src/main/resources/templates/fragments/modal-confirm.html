@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="modalConfirm">
+  <div class="modal fade" id="appConfirmModal" tabindex="-1" aria-labelledby="confirmTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content" style="border-radius:14px;border:none">
+        <div class="modal-header border-0 pb-0">
+          <div class="d-flex align-items-center gap-2">
+            <div style="width:36px;height:36px;background:#fef2f2;border-radius:10px;display:flex;align-items:center;justify-content:center">
+              <i class="bi bi-exclamation-triangle-fill text-danger"></i>
+            </div>
+            <h6 class="modal-title mb-0 fw-bold" id="confirmTitle">Confirmar</h6>
+          </div>
+        </div>
+        <div class="modal-body pt-2 pb-0">
+          <p class="mb-0" id="confirmBody" style="font-size:.875rem;color:#64748b">Tem certeza?</p>
+        </div>
+        <div class="modal-footer border-0 pt-3 gap-2">
+          <button type="button" id="confirmCancelBtn" class="btn btn-outline-secondary btn-sm">
+            Cancelar
+          </button>
+          <button type="button" id="confirmOkBtn" class="btn btn-danger btn-sm">
+            <i class="bi bi-trash3"></i> Excluir
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:replace="~{fragments/head :: head('Editar Cooperado')}"></th:block>
+</head>
+<body>
+
+<div th:insert="~{fragments/menu :: menu}"></div>
+<div th:insert="~{fragments/toast :: toast}"></div>
+
+<div class="main-content">
+  <div class="content-area" style="max-width:720px">
+
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Editar Cooperado</h1>
+        <small>Atualize os dados básicos do cooperado</small>
+      </div>
+      <a th:href="${cooperado != null ? '/cooperado/' + cooperado.coopmatricula : '/cooperados'}"
+         href="/cooperados" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left"></i> Voltar
+      </a>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <i class="bi bi-pencil-square"></i> Dados do Cooperado
+      </div>
+      <div class="card-body">
+        <form method="post" data-loading>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="coopindexcod">Código interno</label>
+              <input type="text" class="form-control" id="coopindexcod"
+                     name="coopindexcod" readonly
+                     th:attr="value=${cooperado.coopindexcod}">
+              <div class="form-text">Somente leitura.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label" for="coopmatricula">Matrícula</label>
+              <input type="text" class="form-control" id="coopmatricula"
+                     name="coopmatricula" readonly
+                     th:attr="value=${cooperado.coopmatricula}">
+              <div class="form-text">Somente leitura.</div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label" for="coopnome">Nome completo</label>
+              <input type="text" class="form-control" id="coopnome"
+                     name="coopnome" required
+                     placeholder="Ex: João da Silva Souza"
+                     th:attr="value=${cooperado.coopnome}">
+            </div>
+
+            <div class="col-12">
+              <label class="form-label" for="coopnomeguerra">Apelido</label>
+              <input type="text" class="form-control" id="coopnomeguerra"
+                     name="coopnomeguerra" required
+                     placeholder="Ex: João Silva"
+                     th:attr="value=${cooperado.coopnomeguerra}">
+            </div>
+          </div>
+
+          <hr class="section-divider">
+
+          <div class="d-flex gap-2 justify-content-end">
+            <a href="/cooperados" class="btn btn-outline-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-check-lg"></i> Salvar Alterações
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+  <div th:insert="~{fragments/footer :: footer}"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/app.js}" src="/js/app.js"></script>
+</body>
+</html>

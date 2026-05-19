@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Relatório de Etiquetas</title>
+    <style>
+        /* Estilos para as etiquetas */
+        .etiqueta {
+            border: 1px solid black;
+            width: 200px;
+            height: 100px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Relatório de Etiquetas</h1>
+    <div th:each="etiqueta : ${etiquetas}" class="etiqueta">
+        <h3 th:text="${etiqueta.nome}"></h3>
+        <p th:text="${etiqueta.endereco}"></p>
+    </div>
+</body>
+</html>

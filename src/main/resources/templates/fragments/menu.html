@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<nav th:fragment="menu" id="appSidebar" class="sidebar">
+
+  <!-- Brand -->
+  <a class="sidebar-brand" href="/">
+    <div class="sidebar-brand-icon">
+      <i class="bi bi-people-fill"></i>
+    </div>
+    <div>
+      <div class="sidebar-brand-text">AppRH</div>
+      <div class="sidebar-brand-sub">Serco</div>
+    </div>
+  </a>
+
+  <!-- Nav -->
+  <ul class="sidebar-nav">
+
+    <li class="sidebar-item">
+      <a class="sidebar-link" href="/">
+        <i class="bi bi-grid-1x2-fill"></i>
+        Dashboard
+      </a>
+    </li>
+
+    <li class="sidebar-item">
+      <span class="sidebar-section-label">Módulos</span>
+    </li>
+
+    <!-- Cooperados -->
+    <li class="sidebar-item">
+      <button class="sidebar-link" type="button"
+              data-bs-toggle="collapse" data-bs-target="#menuCooperados"
+              aria-expanded="false" aria-controls="menuCooperados">
+        <i class="bi bi-person-badge-fill"></i>
+        Cooperados
+        <i class="bi bi-chevron-down sidebar-arrow"></i>
+      </button>
+      <div class="collapse" id="menuCooperados">
+        <ul class="sidebar-submenu">
+          <li><a class="sidebar-link" href="/cooperados"><i class="bi bi-list-ul"></i> Listar</a></li>
+          <li><a class="sidebar-link" href="/cadastrarCooperado"><i class="bi bi-plus-circle"></i> Cadastrar</a></li>
+          <li><a class="sidebar-link" href="/cotas"><i class="bi bi-pie-chart"></i> Cotas</a></li>
+          <li><a class="sidebar-link" href="/relatorios"><i class="bi bi-file-earmark-bar-graph"></i> Relatórios</a></li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- Funcionários -->
+    <li class="sidebar-item">
+      <button class="sidebar-link" type="button"
+              data-bs-toggle="collapse" data-bs-target="#menuFuncionarios"
+              aria-expanded="false" aria-controls="menuFuncionarios">
+        <i class="bi bi-briefcase-fill"></i>
+        Funcionários
+        <i class="bi bi-chevron-down sidebar-arrow"></i>
+      </button>
+      <div class="collapse" id="menuFuncionarios">
+        <ul class="sidebar-submenu">
+          <li><a class="sidebar-link" href="/funcionarios"><i class="bi bi-list-ul"></i> Listar</a></li>
+          <li><a class="sidebar-link" href="/cadastrarFuncionario"><i class="bi bi-plus-circle"></i> Cadastrar</a></li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- Interessados -->
+    <li class="sidebar-item">
+      <button class="sidebar-link" type="button"
+              data-bs-toggle="collapse" data-bs-target="#menuInteressados"
+              aria-expanded="false" aria-controls="menuInteressados">
+        <i class="bi bi-star-fill"></i>
+        Interessados
+        <i class="bi bi-chevron-down sidebar-arrow"></i>
+      </button>
+      <div class="collapse" id="menuInteressados">
+        <ul class="sidebar-submenu">
+          <li><a class="sidebar-link" href="/interessados"><i class="bi bi-list-ul"></i> Listar</a></li>
+          <li><a class="sidebar-link" href="/cadastrarInteressado"><i class="bi bi-plus-circle"></i> Cadastrar</a></li>
+        </ul>
+      </div>
+    </li>
+
+  </ul>
+
+  <!-- Footer -->
+  <div class="sidebar-footer">
+    <a class="sidebar-link" href="/logout" id="logout-link">
+      <i class="bi bi-box-arrow-left"></i>
+      Sair
+    </a>
+  </div>
+
+</nav>
+
+<!-- Mobile toggle & overlay -->
+<button id="sidebarToggle" class="sidebar-toggle" aria-label="Menu">
+  <i class="bi bi-list"></i>
+</button>
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+<!-- Hidden flash message carriers (read by app.js) -->
+<span id="serverMensagem" th:if="${mensagem}" th:attr="data-value=${mensagem}" style="display:none"></span>
+<span id="serverErro"     th:if="${erro}"     th:attr="data-value=${erro}"     style="display:none"></span>
+
+</body>
+</html>

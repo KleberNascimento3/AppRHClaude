@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:replace="~{fragments/head :: head('Dados Cadastrais')}"></th:block>
+</head>
+<body>
+
+<div th:insert="~{fragments/menu :: menu}"></div>
+<div th:insert="~{fragments/toast :: toast}"></div>
+
+<div class="main-content">
+  <div class="content-area">
+
+    <div th:each="cooperado : ${cooperado}">
+
+      <!-- Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Dados Cadastrais</h1>
+          <small>
+            <span th:text="${cooperado.coopnome}"></span>
+            &nbsp;·&nbsp; Matrícula: <strong th:text="${cooperado.coopmatricula}"></strong>
+          </small>
+        </div>
+        <div class="d-flex gap-2">
+          <a th:href="@{/cooperado/editar/{matricula}(matricula=${cooperado.coopmatricula})}"
+             class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-pencil"></i> Editar
+          </a>
+          <a th:href="${(#mvc.url('CC#detalhesCooperado').arg(0, cooperado.coopmatricula)).build()}"
+             class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Voltar
+          </a>
+        </div>
+      </div>
+
+      <!-- Data cards -->
+      <div th:each="c : ${coopcadastro}">
+        <div class="row g-3 mb-3">
+
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header"><i class="bi bi-calendar3 me-2"></i>Datas</div>
+              <div class="card-body">
+                <dl class="row mb-0" style="font-size:.875rem">
+                  <dt class="col-6 text-muted fw-normal">Cadastro</dt>
+                  <dd class="col-6" th:text="${c.coopdatacadastro} ?: '—'"></dd>
+                  <dt class="col-6 text-muted fw-normal">Admissão</dt>
+                  <dd class="col-6" th:text="${c.coopdataadmissao} ?: '—'"></dd>
+                  <dt class="col-6 text-muted fw-normal">Admissibilidade</dt>
+                  <dd class="col-6" th:text="${c.coopdataadmissibilidade} ?: '—'"></dd>
+                  <dt class="col-6 text-muted fw-normal">Desligamento</dt>
+                  <dd class="col-6" th:text="${c.coopdatadesligamento} ?: '—'"></dd>
+                  <dt class="col-6 text-muted fw-normal">Teste Psicológico</dt>
+                  <dd class="col-6" th:text="${c.cooptestepsicologico} ?: '—'"></dd>
+                  <dt class="col-6 text-muted fw-normal">Teste Técnico</dt>
+                  <dd class="col-6" th:text="${c.cooptestetecnico} ?: '—'"></dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header"><i class="bi bi-info-circle me-2"></i>Informações</div>
+              <div class="card-body">
+                <dl class="row mb-0" style="font-size:.875rem">
+                  <dt class="col-5 text-muted fw-normal">Status</dt>
+                  <dd class="col-7">
+                    <span th:if="${c.coopcooperado != null and c.coopcooperado}"
+                          class="badge" style="background:#f0fdf4;color:#16a34a">Ativo</span>
+                    <span th:unless="${c.coopcooperado != null and c.coopcooperado}"
+                          class="badge bg-secondary bg-opacity-10 text-secondary">Inativo</span>
+                  </dd>
+                  <dt class="col-5 text-muted fw-normal">Seleção</dt>
+                  <dd class="col-7" th:text="${c.coopsel} ?: '—'"></dd>
+                  <dt class="col-5 text-muted fw-normal">Indicação</dt>
+                  <dd class="col-7" th:text="${c.coopindicacao} ?: '—'"></dd>
+                  <dt class="col-5 text-muted fw-normal">Motivo deslig.</dt>
+                  <dd class="col-7" th:text="${c.coopmotivodesl} ?: '—'"></dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12" th:if="${c.coopinformacoes != null or c.cooprestricao != null or c.coopanotacoes != null or c.coopocorrencias != null}">
+            <div class="card">
+              <div class="card-header"><i class="bi bi-chat-text me-2"></i>Observações</div>
+              <div class="card-body">
+                <dl class="row mb-0" style="font-size:.875rem">
+                  <dt class="col-md-3 text-muted fw-normal" th:if="${c.coopinformacoes}">Informações</dt>
+                  <dd class="col-md-9" th:if="${c.coopinformacoes}" th:text="${c.coopinformacoes}"></dd>
+                  <dt class="col-md-3 text-muted fw-normal" th:if="${c.cooprestricao}">Restrições</dt>
+                  <dd class="col-md-9" th:if="${c.cooprestricao}" th:text="${c.cooprestricao}"></dd>
+                  <dt class="col-md-3 text-muted fw-normal" th:if="${c.coopanotacoes}">Anotações</dt>
+                  <dd class="col-md-9" th:if="${c.coopanotacoes}" th:text="${c.coopanotacoes}"></dd>
+                  <dt class="col-md-3 text-muted fw-normal" th:if="${c.coopocorrencias}">Ocorrências</dt>
+                  <dd class="col-md-9" th:if="${c.coopocorrencias}" th:text="${c.coopocorrencias}"></dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <div th:insert="~{fragments/footer :: footer}"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/app.js}" src="/js/app.js"></script>
+</body>
+</html>

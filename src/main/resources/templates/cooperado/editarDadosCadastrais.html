@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:replace="~{fragments/head :: head('Editar Dados Cadastrais')}"></th:block>
+</head>
+<body>
+
+<div th:insert="~{fragments/menu :: menu}"></div>
+<div th:insert="~{fragments/toast :: toast}"></div>
+
+<div class="main-content">
+  <div class="content-area" style="max-width:860px">
+
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Editar Dados Cadastrais</h1>
+        <small>Atualize as informações de cadastro do cooperado</small>
+      </div>
+      <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left"></i> Voltar
+      </a>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <i class="bi bi-card-text me-1"></i> Dados Cadastrais
+      </div>
+      <div class="card-body">
+        <form th:action="@{/cooperado/atualizar}" th:object="${coopcadastro}" method="post"
+              enctype="multipart/form-data" data-loading>
+
+          <input type="hidden" th:field="*{cooperado.coopmatricula}" />
+          <input type="hidden" name="coopindexcod" th:value="${coopcadastro.coopindexcod}" />
+
+          <!-- Datas -->
+          <div class="form-section-title">Datas</div>
+          <div class="row g-3 mb-4">
+            <div class="col-md-4">
+              <label class="form-label" for="coopdatacadastro">Data Cadastro</label>
+              <input type="date" class="form-control" id="coopdatacadastro"
+                     th:field="*{coopdatacadastro}">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="coopdataadmissao">Data Admissão</label>
+              <input type="date" class="form-control" id="coopdataadmissao"
+                     th:field="*{coopdataadmissao}">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="coopdataadmissibilidade">Data Admissibilidade</label>
+              <input type="date" class="form-control" id="coopdataadmissibilidade"
+                     th:field="*{coopdataadmissibilidade}">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="cooptestepsicologico">Data Teste Psicológico</label>
+              <input type="text" class="form-control" id="cooptestepsicologico"
+                     th:field="*{cooptestepsicologico}">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="coopdataatestepsico">Data Ateste Psico</label>
+              <input type="date" class="form-control" id="coopdataatestepsico"
+                     th:field="*{coopdataatestepsico}">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="cooptestetecnico">Data Teste Técnico</label>
+              <input type="text" class="form-control" id="cooptestetecnico"
+                     th:field="*{cooptestetecnico}">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="coopdataatestetecnico">Data Ateste Técnico</label>
+              <input type="date" class="form-control" id="coopdataatestetecnico"
+                     th:field="*{coopdataatestetecnico}">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="coopdatadesligamento">Data Desligamento</label>
+              <input type="date" class="form-control" id="coopdatadesligamento"
+                     th:field="*{coopdatadesligamento}">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="coopmotivodesl">Motivo Desligamento</label>
+              <input type="text" class="form-control" id="coopmotivodesl"
+                     th:field="*{coopmotivodesl}">
+            </div>
+          </div>
+
+          <!-- Status -->
+          <div class="form-section-title">Situação</div>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label" for="coopcooperado">Status do Cooperado</label>
+              <input type="text" class="form-control" id="coopcooperado"
+                     th:field="*{coopcooperado}">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" for="coopsel">Seleção</label>
+              <input type="text" class="form-control" id="coopsel"
+                     th:field="*{coopsel}">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" for="coopindicacao">Indicação</label>
+              <input type="number" class="form-control" id="coopindicacao"
+                     th:field="*{coopindicacao}">
+            </div>
+          </div>
+
+          <!-- Observações -->
+          <div class="form-section-title">Observações</div>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label" for="coopinformacoes">Informações</label>
+              <textarea class="form-control" id="coopinformacoes" rows="3"
+                        th:field="*{coopinformacoes}"></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="coopanotacoes">Anotações</label>
+              <textarea class="form-control" id="coopanotacoes" rows="3"
+                        th:field="*{coopanotacoes}"></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="cooprestricao">Restrições</label>
+              <input type="text" class="form-control" id="cooprestricao"
+                     th:field="*{cooprestricao}">
+            </div>
+          </div>
+
+          <!-- Foto -->
+          <div class="form-section-title">Foto</div>
+          <div class="mb-4">
+            <label class="form-label" for="fotosFile">Arquivo de imagem</label>
+            <input type="file" class="form-control" id="fotosFile"
+                   name="fotosFile" accept="image/*">
+            <div class="form-text">Formatos aceitos: JPG, PNG. Tamanho máximo recomendado: 2 MB.</div>
+          </div>
+
+          <hr class="section-divider">
+
+          <div class="d-flex gap-2 justify-content-end">
+            <a th:href="@{/cooperado/{matricula}(matricula=${coopcadastro.cooperado.coopmatricula})}"
+               href="javascript:history.back()" class="btn btn-outline-secondary">
+              Cancelar
+            </a>
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-check-lg"></i> Salvar Alterações
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+  <div th:insert="~{fragments/footer :: footer}"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/app.js}" src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.5.final using JasperReports Library version 6.20.5-3efcf2e67f959db3888d79f73dde2dbd7acb4f8e  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Cooperados" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="06f9d238-a7b8-49de-96db-7be5dc54722c">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MySQL Serco Data Adapter"/>
+	<style name="estilo_cores_alternadas" mode="Opaque" backcolor="#FFFFFF">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2==0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#CCFFFF"/>
+		</conditionalStyle>
+	</style>
+	<queryString language="SQL">
+		<![CDATA[select coop_matricula,coop_nome,coop_nome_guerra from coop]]>
+	</queryString>
+	<field name="coop_matricula" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="coop_matricula"/>
+		<property name="com.jaspersoft.studio.field.label" value="coop_matricula"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="coop"/>
+	</field>
+	<field name="coop_nome" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="coop_nome"/>
+		<property name="com.jaspersoft.studio.field.label" value="coop_nome"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="coop"/>
+	</field>
+	<field name="coop_nome_guerra" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="coop_nome_guerra"/>
+		<property name="com.jaspersoft.studio.field.label" value="coop_nome_guerra"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="coop"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="30" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="130" height="30" forecolor="#FFFFFF" backcolor="#000000" uuid="55d2a104-f15c-4a41-a5fc-be6fdcb2eca5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d1b24a5d-9409-4bf6-8eb2-9c49b1993b65"/>
+				</reportElement>
+				<box padding="1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Matrícula]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="130" y="0" width="252" height="30" forecolor="#FFFFFF" backcolor="#000000" uuid="bbb61de1-5918-4da7-be52-96e071246d14">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e44834c5-4b12-4971-9665-98276795d0ba"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="382" y="0" width="190" height="30" forecolor="#FFFFFF" backcolor="#000000" uuid="23b17180-3fd7-4ecb-ac6a-2ba00ecba426">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fe4a8f1f-4fd7-4d70-bd4a-9cc1582d2e07"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Apelido]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<textField>
+				<reportElement style="estilo_cores_alternadas" mode="Opaque" x="0" y="0" width="130" height="30" uuid="7f83616a-4cd0-427e-8ff3-e6defc2a113a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d1b24a5d-9409-4bf6-8eb2-9c49b1993b65"/>
+				</reportElement>
+				<box padding="1">
+					<pen lineColor="#D6D6D6"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#D6D6D6"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#D6D6D6"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{coop_matricula}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="estilo_cores_alternadas" mode="Opaque" x="130" y="0" width="252" height="30" forecolor="#000000" backcolor="#FFFFFF" uuid="28b50248-cc93-4555-a7d5-78f8cb9d147b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e44834c5-4b12-4971-9665-98276795d0ba"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#D6D6D6"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#D6D6D6"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#D6D6D6"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{coop_nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="estilo_cores_alternadas" mode="Opaque" x="382" y="0" width="190" height="30" uuid="964a3672-d472-448b-b2b8-5357a2da9196">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fe4a8f1f-4fd7-4d70-bd4a-9cc1582d2e07"/>
+				</reportElement>
+				<box>
+					<pen lineColor="#D6D6D6"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#D6D6D6"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#D6D6D6"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{coop_nome_guerra}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
