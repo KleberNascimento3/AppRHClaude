@@ -579,7 +579,8 @@ public class CooperadoController {
 	}
 	
 	// MÉTODO PARA EDITAR DADOS CADASTRAIS
-	@GetMapping("/cooperado/editar/{id}")
+	//@GetMapping("/cooperado/editar/{id}")
+	@GetMapping("/cooperado/editar/{id:\\\\d+}")
 	public String editar(@PathVariable Integer id, Model model) {
 	    Optional<Cooperado> cooperadoOpt = cooperadoRepository.findById(id);
 

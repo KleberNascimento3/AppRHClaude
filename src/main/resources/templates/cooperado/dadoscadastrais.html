@@ -67,9 +67,9 @@
                 <dl class="row mb-0" style="font-size:.875rem">
                   <dt class="col-5 text-muted fw-normal">Status</dt>
                   <dd class="col-7">
-                    <span th:if="${c.coopcooperado != null and c.coopcooperado}"
+                    <span th:if="${c.coopcooperado == 'ATIVO'}"
                           class="badge" style="background:#f0fdf4;color:#16a34a">Ativo</span>
-                    <span th:unless="${c.coopcooperado != null and c.coopcooperado}"
+                    <span th:unless="${c.coopcooperado == 'ATIVO'}"
                           class="badge bg-secondary bg-opacity-10 text-secondary">Inativo</span>
                   </dd>
                   <dt class="col-5 text-muted fw-normal">Seleção</dt>
