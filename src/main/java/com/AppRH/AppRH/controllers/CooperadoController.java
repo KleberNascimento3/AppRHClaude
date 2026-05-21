@@ -1,6 +1,7 @@
 
 package com.AppRH.AppRH.controllers;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -352,34 +353,37 @@ public class CooperadoController {
 	*/
 	//VER DETALHES DOS COOPERADOS
 	@PreAuthorize("hasAnyRole('ADMIN', 'USUARIO','DEVELOPER')")
-	@GetMapping(value="/{coopmatricula}")
+	@GetMapping(value="/cooperado/{coopmatricula}")
 	public ModelAndView detalhesCooperado(@PathVariable("coopmatricula") int coop_matricula) {
-		Cooperado cooperado = cr.findByCoopmatricula(coop_matricula);
-		ModelAndView mv = new ModelAndView("cooperado/detalhesCooperado");
-		mv.addObject("cooperado",cooperado);
-		
-		Iterable<Telefone> telefones = tr.findByCooperado(cooperado);
-		mv.addObject("telefones",telefones);
-		
-		Iterable<Dividas> dividas = dr.findByCooperado(cooperado);
-		mv.addObject("dividas",dividas);
-		
-		Iterable<Cotaparte> cotaparte = cpr.findByCooperado(cooperado);
-		mv.addObject("cotaparte",cotaparte);
-		
-		//Iterable<Coopcadastro> coopcadastro = cc.findByCooperado(cooperado);
-		//mv.addObject("coopcadastro",coopcadastro);
-		
-		// Coopcadastro — assume-se que queremos só o primeiro (ou único)
-	    Iterable<Coopcadastro> coopcadastroList = cc.findByCooperado(cooperado);
-	    Coopcadastro unicoCadastro = coopcadastroList.iterator().hasNext() ? coopcadastroList.iterator().next() : null;
-	    mv.addObject("coopcadastro", unicoCadastro);
-		
-		Iterable<Lgpd> lgpd = lr.findByCooperado(cooperado);
-		mv.addObject("lgpd",lgpd);
 
-		
-		return mv;		
+	    Cooperado cooperado = cr.findByCoopmatricula(coop_matricula);
+
+	    ModelAndView mv = new ModelAndView("cooperado/detalhesCooperado");
+
+	    mv.addObject("cooperado", cooperado);
+
+	    Iterable<Telefone> telefones = tr.findByCooperado(cooperado);
+	    mv.addObject("telefones", telefones);
+
+	    Iterable<Dividas> dividas = dr.findByCooperado(cooperado);
+	    mv.addObject("dividas", dividas);
+
+	    Iterable<Cotaparte> cotaparte = cpr.findByCooperado(cooperado);
+	    mv.addObject("cotaparte", cotaparte);
+
+	    Iterable<Coopcadastro> coopcadastroList = cc.findByCooperado(cooperado);
+
+	    Coopcadastro unicoCadastro =
+	        coopcadastroList.iterator().hasNext()
+	            ? coopcadastroList.iterator().next()
+	            : null;
+
+	    mv.addObject("coopcadastro", unicoCadastro);
+
+	    Iterable<Lgpd> lgpd = lr.findByCooperado(cooperado);
+	    mv.addObject("lgpd", lgpd);
+
+	    return mv;
 	}
 	//MOSTRAR DÍVIDAS
 	@PreAuthorize("hasAnyRole('ADMIN', 'USUARIO','DEVELOPER')")
@@ -507,7 +511,7 @@ public class CooperadoController {
 	
 	//ADICIONAR TELEFONE
 	@PreAuthorize("hasAnyRole('ADMIN', 'USUARIO','DEVELOPER')")
-	@PostMapping(value="/{coopmatricula}")
+	@PostMapping(value="/cooperado/{coopmatricula}/telefone")
 	public String detalhesCooperadosPost(@PathVariable("coopmatricula") int coop_matricula, @Valid Telefone telefone,BindingResult result, RedirectAttributes attributes) {
 		log.debug("Adicionando telefone ao cooperado: {}", coop_matricula);
 		if(result.hasErrors()) {
@@ -542,6 +546,32 @@ public class CooperadoController {
 		
 		return "redirect:/" +coop_matricula;
 		
+	}
+	
+	
+	@PostMapping("/uploadFoto/{matricula}")
+	public String uploadFoto(@PathVariable Integer matricula,
+	                         @RequestParam("foto") MultipartFile foto) {
+
+	    try {
+
+	        String pasta = "C:/uploads/";
+
+	        File diretorio = new File(pasta);
+
+	        if (!diretorio.exists()) {
+	            diretorio.mkdirs();
+	        }
+
+	        String caminho = pasta + matricula + ".jpg";
+
+	        foto.transferTo(new File(caminho));
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return "redirect:/cooperado/" + matricula;
 	}
 	
 	@PreAuthorize("hasAnyRole('ADMIN','DEVELOPER')")
