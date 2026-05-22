@@ -548,14 +548,14 @@ public class CooperadoController {
 		
 	}
 	
-	
 	@PostMapping("/uploadFoto/{matricula}")
 	public String uploadFoto(@PathVariable Integer matricula,
 	                         @RequestParam("foto") MultipartFile foto) {
 
 	    try {
 
-	        String pasta = "C:/uploads/";
+	    	String pasta = System.getProperty("user.dir")
+	    	        + "/target/classes/static/uploads/";
 
 	        File diretorio = new File(pasta);
 
@@ -565,15 +565,21 @@ public class CooperadoController {
 
 	        String caminho = pasta + matricula + ".jpg";
 
-	        foto.transferTo(new File(caminho));
+	        File arquivoDestino = new File(caminho);
+
+	        foto.transferTo(arquivoDestino);
+
+	        System.out.println("Foto salva em:");
+	        System.out.println(arquivoDestino.getAbsolutePath());
 
 	    } catch (Exception e) {
+
+	        System.out.println("ERRO AO SALVAR FOTO:");
 	        e.printStackTrace();
 	    }
 
 	    return "redirect:/cooperado/" + matricula;
 	}
-	
 	@PreAuthorize("hasAnyRole('ADMIN','DEVELOPER')")
 	public String detalhesTelefonePost(@PathVariable("coopmatricula") int coop_matricula, @Valid Telefone telefone,
 			BindingResult result, RedirectAttributes attributes) {
