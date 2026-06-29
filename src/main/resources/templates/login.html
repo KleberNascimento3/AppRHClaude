@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:replace="~{fragments/head :: head('Entrar')}"></th:block>
+</head>
+<body class="login-page">
+  <main class="login-shell">
+    <section class="login-panel">
+      <div class="login-brand">
+        <div class="login-brand-icon"><i class="bi bi-shield-lock-fill"></i></div>
+        <div>
+          <strong>AppRH</strong>
+          <span>Serco</span>
+        </div>
+      </div>
+
+      <div class="login-copy">
+        <p class="login-kicker">Acesso seguro</p>
+        <h1>Controle de RH com mais praticidade.</h1>
+        <p>Entre com seu usuario para acessar cooperados, funcionarios, relatorios e administracao do sistema.</p>
+      </div>
+    </section>
+
+    <section class="login-card" aria-label="Formulario de entrada">
+      <div class="login-card-header">
+        <h2>Entrar no sistema</h2>
+        <p>Use seu usuario e senha cadastrados.</p>
+      </div>
+
+      <div th:if="${param.error}" class="alert alert-danger mb-3">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        Usuario ou senha invalidos.
+      </div>
+      <div th:if="${param.logout}" class="alert alert-success mb-3">
+        <i class="bi bi-check-circle-fill"></i>
+        Voce saiu do sistema.
+      </div>
+
+      <form th:action="@{/login}" method="post" class="login-form">
+        <div class="mb-3">
+          <label class="form-label" for="username">Usuario</label>
+          <div class="input-icon">
+            <i class="bi bi-person"></i>
+            <input class="form-control" id="username" name="username" type="text" autocomplete="username" autofocus required>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label" for="password">Senha</label>
+          <div class="input-icon">
+            <i class="bi bi-key"></i>
+            <input class="form-control" id="password" name="password" type="password" autocomplete="current-password" required>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-lg w-100 justify-content-center" type="submit">
+          <i class="bi bi-box-arrow-in-right"></i> Entrar
+        </button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

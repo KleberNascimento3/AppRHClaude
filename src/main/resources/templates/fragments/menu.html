@@ -26,7 +26,7 @@
     </li>
 
     <li class="sidebar-item">
-      <span class="sidebar-section-label">Módulos</span>
+      <span class="sidebar-section-label">Modulos</span>
     </li>
 
     <!-- Cooperados -->
@@ -43,18 +43,18 @@
           <li><a class="sidebar-link" href="/cooperados"><i class="bi bi-list-ul"></i> Listar</a></li>
           <li><a class="sidebar-link" href="/cadastrarCooperado"><i class="bi bi-plus-circle"></i> Cadastrar</a></li>
           <li><a class="sidebar-link" href="/cotas"><i class="bi bi-pie-chart"></i> Cotas</a></li>
-          <li><a class="sidebar-link" href="/relatorios"><i class="bi bi-file-earmark-bar-graph"></i> Relatórios</a></li>
+          <li><a class="sidebar-link" href="/relatorios"><i class="bi bi-file-earmark-bar-graph"></i> Relatorios</a></li>
         </ul>
       </div>
     </li>
 
-    <!-- Funcionários -->
+    <!-- Funcionarios -->
     <li class="sidebar-item">
       <button class="sidebar-link" type="button"
               data-bs-toggle="collapse" data-bs-target="#menuFuncionarios"
               aria-expanded="false" aria-controls="menuFuncionarios">
         <i class="bi bi-briefcase-fill"></i>
-        Funcionários
+        Funcionarios
         <i class="bi bi-chevron-down sidebar-arrow"></i>
       </button>
       <div class="collapse" id="menuFuncionarios">
@@ -80,6 +80,17 @@
           <li><a class="sidebar-link" href="/cadastrarInteressado"><i class="bi bi-plus-circle"></i> Cadastrar</a></li>
         </ul>
       </div>
+    </li>
+
+    <li class="sidebar-item" sec:authorize="hasRole('ADMIN')">
+      <span class="sidebar-section-label">Sistema</span>
+    </li>
+
+    <li class="sidebar-item" sec:authorize="hasRole('ADMIN')">
+      <a class="sidebar-link" href="/admin/usuarios">
+        <i class="bi bi-shield-lock-fill"></i>
+        Usuarios
+      </a>
     </li>
 
   </ul>

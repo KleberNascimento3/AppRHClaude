@@ -15,42 +15,46 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-	
-	@Autowired
-	private UserDetailsService userDetailsService;
-	
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http
-			.csrf().disable()
-			.headers()
-				.contentTypeOptions()
-				.and()
-				.frameOptions().sameOrigin()
-				.and()
-			.httpBasic()
-			.and()
-				.authorizeRequests()
-				.anyRequest().authenticated()
-			.and()
-				.logout()
-					.logoutSuccessUrl("/")
-					.invalidateHttpSession(true)
-					.clearAuthentication(true)
-			.and()
-				.exceptionHandling().accessDeniedPage("/acesso-negado")
-			.and()
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-	}
-	@Override
-	  public void configure(AuthenticationManagerBuilder auth) throws Exception {
-	    auth.userDetailsService(userDetailsService);
-	  }
+    
+    @Autowired
+    private UserDetailsService userDetailsService;
+    
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+            .csrf().disable()
+            .headers()
+                .contentTypeOptions()
+                .and()
+                .frameOptions().sameOrigin()
+                .and()
+            .authorizeRequests()
+                .antMatchers("/login", "/css/**", "/js/**", "/bootstrap/**", "/uploads/**").permitAll()
+                .antMatchers("/admin/usuarios", "/admin/usuarios/**", "/usuario", "/usuario/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+            .and()
+                .formLogin()
+                    .loginPage("/login")
+                    .defaultSuccessUrl("/", true)
+                    .permitAll()
+            .and()
+                .logout()
+                    .logoutSuccessUrl("/login?logout")
+                    .invalidateHttpSession(true)
+                    .clearAuthentication(true)
+            .and()
+                .exceptionHandling().accessDeniedPage("/acesso-negado")
+            .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
+    }
+    @Override
+      public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService);
+      }
 
-	@Bean
-	public PasswordEncoder passwordEncoderBean() {
-		return new BCryptPasswordEncoder();
-	}
+    @Bean
+    public PasswordEncoder passwordEncoderBean() {
+        return new BCryptPasswordEncoder();
+    }
 
 }
-

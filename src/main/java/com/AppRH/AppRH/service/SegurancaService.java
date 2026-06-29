@@ -8,16 +8,24 @@ import com.AppRH.AppRH.models.Autorizacao;
 import com.AppRH.AppRH.models.Usuario;
 
 public interface SegurancaService extends UserDetailsService {
-	
-	public Usuario criarUsuario(String nome, String senha, String email, String autorizacao);
-	
-	public List<Usuario> buscarTodosUsuarios();
-	
-	public Usuario buscarUsuarioPorId(Long id);
-	
-	public Usuario buscarUsuarioPorNome(String nome);
-	
-	public Autorizacao buscarAutorizacaoPorNome(String nome);
-	
+    
+    public Usuario criarUsuario(String nome, String senha, String email, String autorizacao);
+
+    public Usuario atualizarUsuario(Long id, String nome, String email, String senha, String autorizacao);
+
+    public void alterarSenhaUsuario(Long id, String senha);
+
+    public void excluirUsuario(Long id);
+    
+    public List<Usuario> buscarTodosUsuarios();
+    
+    public Usuario buscarUsuarioPorId(Long id);
+    
+    public Usuario buscarUsuarioPorNome(String nome);
+    
+    public Autorizacao buscarAutorizacaoPorNome(String nome);
+
+    public List<Autorizacao> buscarTodasAutorizacoes();
+    
 
 }
