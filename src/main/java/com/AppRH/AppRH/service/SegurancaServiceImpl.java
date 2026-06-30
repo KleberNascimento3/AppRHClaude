@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,7 +38,7 @@ public class SegurancaServiceImpl implements SegurancaService{
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DESENVOLVEDOR', 'DEVELOPER')")
     public Usuario criarUsuario(String nome, String senha, String email, String autorizacao) {
         Usuario usuario = new Usuario();
         usuario.setNome(nome);
@@ -49,12 +52,13 @@ public class SegurancaServiceImpl implements SegurancaService{
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DESENVOLVEDOR', 'DEVELOPER')")
     public Usuario atualizarUsuario(Long id, String nome, String email, String senha, String autorizacao) {
         Usuario usuario = buscarUsuarioPorId(id);
         usuario.setNome(nome);
         usuario.setEmail(email);
         if (StringUtils.hasText(senha)) {
+            validarAlteracaoSenhaPermitida(usuario, autorizacao);
             usuario.setSenha(passEncoder.encode(senha));
         }
         usuario.setAutorizacoes(new HashSet<Autorizacao>());
@@ -64,16 +68,17 @@ public class SegurancaServiceImpl implements SegurancaService{
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DESENVOLVEDOR', 'DEVELOPER')")
     public void alterarSenhaUsuario(Long id, String senha) {
         Usuario usuario = buscarUsuarioPorId(id);
+        validarAlteracaoSenhaPermitida(usuario, null);
         usuario.setSenha(passEncoder.encode(senha));
         ur.save(usuario);
     }
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DESENVOLVEDOR', 'DEVELOPER')")
     public void excluirUsuario(Long id) {
         Usuario usuario = buscarUsuarioPorId(id);
         boolean usuarioAdmin = usuario.getAutorizacoes().stream()
@@ -82,6 +87,53 @@ public class SegurancaServiceImpl implements SegurancaService{
             throw new IllegalStateException("Nao e possivel excluir o ultimo administrador do sistema.");
         }
         ur.delete(usuario);
+    }
+
+
+    private void validarAlteracaoSenhaPermitida(Usuario usuario, String novaAutorizacao) {
+        boolean alvoDesenvolvedor = usuarioTemPerfilDesenvolvedor(usuario) || autorizacaoEhDesenvolvedor(novaAutorizacao);
+        if (alvoDesenvolvedor && usuarioLogadoEhAdminSemPerfilDesenvolvedor()) {
+            throw new IllegalStateException("Administradores nao podem alterar a senha de usuarios desenvolvedores.");
+        }
+    }
+
+    private boolean usuarioTemPerfilDesenvolvedor(Usuario usuario) {
+        return usuario.getAutorizacoes().stream()
+                .anyMatch(autorizacao -> autorizacaoEhDesenvolvedor(autorizacao.getNome()));
+    }
+
+    private boolean autorizacaoEhDesenvolvedor(String autorizacao) {
+        String perfil = normalizarAutorizacao(autorizacao);
+        return "DESENVOLVEDOR".equals(perfil) || "DEVELOPER".equals(perfil);
+    }
+
+    private boolean autorizacaoEhAdmin(String autorizacao) {
+        return "ADMIN".equals(normalizarAutorizacao(autorizacao));
+    }
+
+    private String normalizarAutorizacao(String autorizacao) {
+        if (autorizacao == null) {
+            return "";
+        }
+        String nome = autorizacao.trim().toUpperCase();
+        if (nome.startsWith("ROLE_")) {
+            nome = nome.substring(5);
+        }
+        return nome;
+    }
+
+    private boolean usuarioLogadoEhAdminSemPerfilDesenvolvedor() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return false;
+        }
+        boolean admin = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(this::autorizacaoEhAdmin);
+        boolean desenvolvedor = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(this::autorizacaoEhDesenvolvedor);
+        return admin && !desenvolvedor;
     }
 
     private Autorizacao buscarOuCriarAutorizacao(String autorizacao) {
@@ -96,7 +148,7 @@ public class SegurancaServiceImpl implements SegurancaService{
     }
     
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DESENVOLVEDOR', 'DEVELOPER')")
     public List<Usuario> buscarTodosUsuarios(){
         return ur.findAll();
     }
@@ -132,7 +184,7 @@ public class SegurancaServiceImpl implements SegurancaService{
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DESENVOLVEDOR', 'DEVELOPER')")
     public List<Autorizacao> buscarTodasAutorizacoes() {
         return ar.findAll();
     }

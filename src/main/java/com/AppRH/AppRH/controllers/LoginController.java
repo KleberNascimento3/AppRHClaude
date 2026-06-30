@@ -12,7 +12,7 @@ public class LoginController {
     public String login(Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken)) {
-            return "redirect:/";
+            return "redirect:/listaCooperados";
         }
         return "login";
     }

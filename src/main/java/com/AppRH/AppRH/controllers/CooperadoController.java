@@ -111,7 +111,25 @@ public class CooperadoController {
 	
 	@PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
 	@PostMapping(value = "/cadastrarCooperado")
-	public String form(@Valid Cooperado cooperado, BindingResult result, RedirectAttributes attributes) {
+	public String form(@Valid Cooperado cooperado, BindingResult result, RedirectAttributes attributes,
+            @RequestParam(value = "coopendendereco", required = false) String coopendendereco,
+            @RequestParam(value = "coopbairro", required = false) String coopbairro,
+            @RequestParam(value = "coopcidade", required = false) String coopcidade,
+            @RequestParam(value = "coopestado", required = false) String coopestado,
+            @RequestParam(value = "coopcep", required = false) String coopcep,
+            @RequestParam(value = "cooppais", required = false) String cooppais,
+            @RequestParam(value = "dividaDescricao", required = false) String dividaDescricao,
+            @RequestParam(value = "dividaValor", required = false) Float dividaValor,
+            @RequestParam(value = "dividaFormaPagto", required = false) String dividaFormaPagto,
+            @RequestParam(value = "dividaDataVencimento", required = false) String dividaDataVencimento,
+            @RequestParam(value = "dividaDataPagamento", required = false) String dividaDataPagamento,
+            @RequestParam(value = "cotaDescricao", required = false) String cotaDescricao,
+            @RequestParam(value = "cotaValor", required = false) Float cotaValor,
+            @RequestParam(value = "cotaFormaPagto", required = false) String cotaFormaPagto,
+            @RequestParam(value = "cotaDataVencimento", required = false) String cotaDataVencimento,
+            @RequestParam(value = "cotaDataPagamento", required = false) String cotaDataPagamento,
+            @RequestParam(value = "cooptelnumero", required = false) String cooptelnumero,
+            @RequestParam(value = "coopteltipo", required = false) String coopteltipo) {
 		if(result.hasErrors()) {
 			attributes.addFlashAttribute("mensagem","Verifique os campos....");
 			return "redirect:/cadastrarCooperado";
@@ -168,20 +186,55 @@ public class CooperadoController {
 		 
 		 cr.save(cooperado);
 		 
-		
-		//SALVANDO UM LOG DE INCLUSÃO
-		 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		 String username = authentication.getName();
-		 
-		 
-		 LogAlteracao lalte= new LogAlteracao();
-		 lalte.setData(LocalDateTime.now());
-		 lalte.setTabela("Cooperado");
-		 lalte.setOperacao("Inclusão");
-		 lalte.setDetalhes("Cooperado Inserido");
-		 lalte.setCoopmatricula(cooperado.getCoopindexcod());
-		 lalte.setUsuario(username);
-	     la.save(lalte);
+		 registrarLogCooperado("Cooperado", "INCLUSAO", "Cooperado incluido", cooperado.getCoopmatricula());
+
+         if (coopendendereco != null && !coopendendereco.trim().isEmpty()) {
+             Coopendereco endereco = new Coopendereco();
+             endereco.setCooperado(cooperado);
+             endereco.setCoopendendereco(coopendendereco);
+             endereco.setCoopbairro(coopbairro);
+             endereco.setCoopcidade(coopcidade);
+             endereco.setCoopestado(coopestado);
+             endereco.setCoopcep(coopcep);
+             endereco.setCooppais(cooppais);
+             er.save(endereco);
+             registrarLogCooperado("Endereco", "INCLUSAO", "Endereco incluido no cadastro inicial", cooperado.getCoopmatricula());
+         }
+
+         if (dividaDescricao != null && !dividaDescricao.trim().isEmpty()) {
+             Dividas divida = new Dividas();
+             divida.setCooperado(cooperado);
+             divida.setCoopdescricao(dividaDescricao);
+             divida.setCoopvalor(dividaValor != null ? dividaValor : 0F);
+             divida.setCoopformapagto(dividaFormaPagto);
+             divida.setCoopdatavencimento((dividaDataVencimento != null && !dividaDataVencimento.trim().isEmpty()) ? java.sql.Date.valueOf(dividaDataVencimento) : null);
+             divida.setCoopdatapagamento((dividaDataPagamento != null && !dividaDataPagamento.trim().isEmpty()) ? java.sql.Date.valueOf(dividaDataPagamento) : null);
+             divida.setCoopflagcotaparte(0);
+             dr.save(divida);
+             registrarLogCooperado("Dividas", "INCLUSAO", "Divida incluida no cadastro inicial", cooperado.getCoopmatricula());
+         }
+
+         if (cotaDescricao != null && !cotaDescricao.trim().isEmpty()) {
+             Cotaparte cota = new Cotaparte();
+             cota.setCooperado(cooperado);
+             cota.setCoopdescricao(cotaDescricao);
+             cota.setCoopvalor(cotaValor != null ? cotaValor : 0F);
+             cota.setCoopformapagto(cotaFormaPagto);
+             cota.setCoopdatavencimento((cotaDataVencimento != null && !cotaDataVencimento.trim().isEmpty()) ? java.sql.Date.valueOf(cotaDataVencimento) : null);
+             cota.setCoopdatapagamento((cotaDataPagamento != null && !cotaDataPagamento.trim().isEmpty()) ? java.sql.Date.valueOf(cotaDataPagamento) : null);
+             cota.setCoopflagcotaparte(1);
+             cpr.save(cota);
+             registrarLogCooperado("Cota parte", "INCLUSAO", "Cota parte incluida no cadastro inicial", cooperado.getCoopmatricula());
+         }
+
+         if (cooptelnumero != null && !cooptelnumero.trim().isEmpty()) {
+             Telefone telefone = new Telefone();
+             telefone.setCooperado(cooperado);
+             telefone.setCooptelnumero(cooptelnumero);
+             telefone.setCoopteltipo(coopteltipo);
+             tr.save(telefone);
+             registrarLogCooperado("Telefone", "INCLUSAO", "Telefone incluido no cadastro inicial", cooperado.getCoopmatricula());
+         }
 	      
 	
 		 attributes.addFlashAttribute("mensagem","Cooperado cadastrado com sucesso!");
@@ -371,6 +424,13 @@ public class CooperadoController {
 	    Iterable<Cotaparte> cotaparte = cpr.findByCooperado(cooperado);
 	    mv.addObject("cotaparte", cotaparte);
 
+	    Iterable<Coopendereco> enderecos = er.findByCooperado(cooperado);
+	    mv.addObject("enderecos", enderecos);
+
+	    if (usuarioPodeVerAuditoria()) {
+        mv.addObject("logs", la.findByCoopmatriculaOrderByDataDesc(coop_matricula));
+    }
+
 	    Iterable<Coopcadastro> coopcadastroList = cc.findByCooperado(cooperado);
 
 	    Coopcadastro unicoCadastro =
@@ -516,14 +576,14 @@ public class CooperadoController {
 		log.debug("Adicionando telefone ao cooperado: {}", coop_matricula);
 		if(result.hasErrors()) {
 			attributes.addFlashAttribute("mensagem", "Verifique os campos");
-			return "redirect:/{coopmatricula}";
+			return "redirect:/cooperado/" + coop_matricula + "#telefones";
 		}
 		
 		
 		//TIPO DE TELEFONE DUPLICADO
 		if(tr.findBycooptelnumero(telefone.getCooptelnumero())!=null){
 			attributes.addFlashAttribute("mensagem_erro","Número duplicado");
-			return "redirect:/{coopmatricula}";
+			return "redirect:/cooperado/" + coop_matricula + "#telefones";
 		}
 		
 		Cooperado cooperado = cr.findByCoopmatricula(coop_matricula);
@@ -531,7 +591,7 @@ public class CooperadoController {
 		telefone.setCooperado(cooperado);
 		tr.save(telefone);
 		attributes.addFlashAttribute("mensagem","Telefone adicionado com sucesso!");
-		return "redirect:/{coopmatricula}";
+		return "redirect:/cooperado/" + coop_matricula + "#telefones";
 		
 	}
 	
@@ -544,7 +604,7 @@ public class CooperadoController {
 		String coop_matricula = "" + cooperado.getCoopmatricula();
 		tr.delete(telefone);	
 		
-		return "redirect:/" +coop_matricula;
+		return "redirect:/cooperado/" +coop_matricula + "#telefones";
 		
 	}
 	
@@ -585,19 +645,19 @@ public class CooperadoController {
 			BindingResult result, RedirectAttributes attributes) {
 		if(result.hasErrors()) {
 			attributes.addFlashAttribute("mensagem", "Verifique os campos");
-			return "redirect:/{coop_matricula}";
+			return "redirect:/cooperado/" + coop_matricula + "#telefones";
 		}
 		//TELEFONE DUPLICADO
 		if(tr.findBycooptelnumero(telefone.getCooptelnumero())!=null) {
 			attributes.addFlashAttribute("mensagem erro","Tipo duplicado");
-			return "redirect:/{coop_matricula}";
+			return "redirect:/cooperado/" + coop_matricula + "#telefones";
 		}
 		
 		Cooperado cooperado = cr.findByCoopmatricula(coop_matricula);
 		telefone.setCooperado(cooperado);
 		tr.save(telefone);
 		attributes.addFlashAttribute("mensagem","Telefone adicionado com sucesso!");
-		return "redirect:/{coop_matricula}";
+		return "redirect:/cooperado/" + coop_matricula + "#telefones";
 	
 	}
 	//METODOS QUE ATUALIZAM COOPERADO
@@ -675,6 +735,7 @@ public class CooperadoController {
 	        }
 
 	        coopCadastroRepository.save(cadastroExistente);
+        registrarLogCooperado("Dados cadastrais", "ALTERACAO", "Dados cadastrais atualizados", cadastroExistente.getCooperado().getCoopmatricula());
 
 	        // Redireciona com sucesso
 	        Long matricula = cadastroExistente.getCoopcooperado() != null
@@ -733,6 +794,7 @@ public class CooperadoController {
 	        dividaExistente.setCoopvalor(dividas.getCoopvalor());
 
 	        dividasRepository.save(dividaExistente);
+        registrarLogCooperado("Dividas", "ALTERACAO", "Divida atualizada", dividaExistente.getCooperado().getCoopmatricula());
 
 	        // Redireciona para a lista de dívidas do cooperado
 	        return "redirect:/divida" + dividaExistente.getCooperado().getCoopmatricula() + "?sucesso";
@@ -749,13 +811,39 @@ public class CooperadoController {
 		cooperado.setCoopnome(cooperado.getCoopnome().toUpperCase());
 	    cooperado.setCoopnomeguerra(cooperado.getCoopnomeguerra().toUpperCase());
 		cr.save(cooperado);
+		registrarLogCooperado("Cooperado", "ALTERACAO", "Cooperado alterado", cooperado.getCoopmatricula());
 		attributes.addFlashAttribute("sucess","Cooperado alterado com sucesso");
 		long codigoInt = cooperado.getCoopmatricula();
 		String coopmatricula=""+codigoInt;
 		return "redirect:/" +coopmatricula;
 	}
 	
-	//MÉTODO PARA TRABALHAR COM ENCRIPTAÇÃO
+	
+
+    private boolean usuarioPodeVerAuditoria() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return false;
+        }
+        return authentication.getAuthorities().stream()
+                .map(authority -> authority.getAuthority())
+                .anyMatch(authority -> "ROLE_ADMIN".equals(authority)
+                        || "ROLE_DEVELOPER".equals(authority)
+                        || "ROLE_DESENVOLVEDOR".equals(authority));
+    }
+    private void registrarLogCooperado(String tabela, String operacao, String detalhes, int matricula) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication != null ? authentication.getName() : "sistema";
+        LogAlteracao logAlteracao = new LogAlteracao();
+        logAlteracao.setData(LocalDateTime.now());
+        logAlteracao.setTabela(tabela);
+        logAlteracao.setOperacao(operacao);
+        logAlteracao.setDetalhes(detalhes);
+        logAlteracao.setCoopmatricula(matricula);
+        logAlteracao.setUsuario(username);
+        la.save(logAlteracao);
+    }
+	//METODO PARA TRABALHAR COM ENCRIPTACAO
 	@Autowired
 	@PreAuthorize("hasAnyRole('ADMIN', 'USUARIO','DEVELOPER')")
 	private PasswordEncoder passwordEncorderBean() {

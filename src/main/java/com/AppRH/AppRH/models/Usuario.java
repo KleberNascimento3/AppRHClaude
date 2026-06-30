@@ -85,5 +85,63 @@ public class Usuario {
 
     public void setSenha(String senha) {
         this.senha = senha;
-    }    
+    }
+    public boolean isAdministrador() {
+        return possuiAutorizacao("ADMIN");
+    }
+
+    public boolean isDesenvolvedor() {
+        return possuiAutorizacao("DESENVOLVEDOR") || possuiAutorizacao("DEVELOPER");
+    }
+
+    public String getPerfilPrincipal() {
+        if (isDesenvolvedor()) {
+            return "Desenvolvedor";
+        }
+        if (isAdministrador()) {
+            return "Administrador";
+        }
+        return "Usuario";
+    }
+
+    public String getAutorizacaoPrincipal() {
+        if (autorizacoes != null) {
+            for (Autorizacao autorizacao : autorizacoes) {
+                String nome = normalizarAutorizacao(autorizacao.getNome());
+                if ("DEVELOPER".equals(nome)) {
+                    return autorizacao.getNome();
+                }
+                if ("DESENVOLVEDOR".equals(nome)) {
+                    return autorizacao.getNome();
+                }
+            }
+        }
+        if (isAdministrador()) {
+            return "ROLE_ADMIN";
+        }
+        return "ROLE_USUARIO";
+    }
+
+    private boolean possuiAutorizacao(String perfil) {
+        if (autorizacoes == null) {
+            return false;
+        }
+        for (Autorizacao autorizacao : autorizacoes) {
+            if (perfil.equals(normalizarAutorizacao(autorizacao.getNome()))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String normalizarAutorizacao(String autorizacao) {
+        if (autorizacao == null) {
+            return "";
+        }
+        String nome = autorizacao.trim().toUpperCase();
+        if (nome.startsWith("ROLE_")) {
+            nome = nome.substring(5);
+        }
+        return nome;
+    }
 }

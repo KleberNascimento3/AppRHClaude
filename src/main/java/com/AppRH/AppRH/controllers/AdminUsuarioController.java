@@ -15,7 +15,7 @@ import com.AppRH.AppRH.service.SegurancaService;
 
 @Controller
 @RequestMapping("/admin/usuarios")
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAnyRole('ADMIN', 'DESENVOLVEDOR', 'DEVELOPER')")
 public class AdminUsuarioController {
 
     @Autowired

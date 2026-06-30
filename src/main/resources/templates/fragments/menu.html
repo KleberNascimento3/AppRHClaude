@@ -82,14 +82,20 @@
       </div>
     </li>
 
-    <li class="sidebar-item" sec:authorize="hasRole('ADMIN')">
+    <li class="sidebar-item" sec:authorize="hasAnyRole('ADMIN', 'DESENVOLVEDOR', 'DEVELOPER')">
       <span class="sidebar-section-label">Sistema</span>
     </li>
 
-    <li class="sidebar-item" sec:authorize="hasRole('ADMIN')">
+    <li class="sidebar-item" sec:authorize="hasAnyRole('ADMIN', 'DESENVOLVEDOR', 'DEVELOPER')">
       <a class="sidebar-link" href="/admin/usuarios">
         <i class="bi bi-shield-lock-fill"></i>
         Usuarios
+      </a>
+    </li>
+    <li class="sidebar-item" sec:authorize="hasAnyRole('ADMIN', 'DESENVOLVEDOR', 'DEVELOPER')">
+      <a class="sidebar-link" href="/admin/auditoria">
+        <i class="bi bi-clock-history"></i>
+        Auditoria
       </a>
     </li>
 

@@ -48,6 +48,8 @@
                 <select class="form-select" name="autorizacao" required>
                   <option value="ROLE_USUARIO">Usuario</option>
                   <option value="ROLE_ADMIN">Administrador</option>
+                  <option value="ROLE_DESENVOLVEDOR">Desenvolvedor</option>
+                  <option value="ROLE_DEVELOPER">Developer</option>
                 </select>
               </div>
               <button class="btn btn-primary w-100 justify-content-center" type="submit">
@@ -76,10 +78,7 @@
                   <td class="fw-semibold" th:text="${usuario.nome}"></td>
                   <td th:text="${usuario.email}"></td>
                   <td>
-                    <span th:each="aut : ${usuario.autorizacoes}"
-                          class="badge"
-                          th:classappend="${aut.nome == 'ROLE_ADMIN'} ? ' bg-danger' : ' bg-primary'"
-                          th:text="${aut.nome == 'ROLE_ADMIN'} ? 'Administrador' : 'Usuario'"></span>
+                    <span class="badge" th:classappend="${usuario.administrador} ? ' bg-danger' : (${usuario.desenvolvedor} ? ' bg-warning text-dark' : ' bg-primary')" th:text="${usuario.perfilPrincipal}"></span>
                   </td>
                   <td class="table-actions">
                     <button class="btn btn-sm btn-outline-primary" type="button"
@@ -114,8 +113,10 @@
                         <div>
                           <label class="form-label">Permissao</label>
                           <select class="form-select" name="autorizacao" required>
-                            <option value="ROLE_USUARIO" th:selected="${#lists.contains(usuario.autorizacoes.![nome], 'ROLE_USUARIO')}">Usuario</option>
-                            <option value="ROLE_ADMIN" th:selected="${#lists.contains(usuario.autorizacoes.![nome], 'ROLE_ADMIN')}">Administrador</option>
+                            <option value="ROLE_USUARIO" th:selected="${usuario.autorizacaoPrincipal == 'ROLE_USUARIO'}">Usuario</option>
+                            <option value="ROLE_ADMIN" th:selected="${usuario.autorizacaoPrincipal == 'ROLE_ADMIN'}">Administrador</option>
+                            <option value="ROLE_DESENVOLVEDOR" th:selected="${usuario.autorizacaoPrincipal == 'ROLE_DESENVOLVEDOR' or usuario.autorizacaoPrincipal == 'DESENVOLVEDOR'}">Desenvolvedor</option>
+                            <option value="ROLE_DEVELOPER" th:selected="${usuario.autorizacaoPrincipal == 'ROLE_DEVELOPER' or usuario.autorizacaoPrincipal == 'DEVELOPER'}">Developer</option>
                           </select>
                         </div>
                         <button class="btn btn-primary align-self-end" type="submit"><i class="bi bi-check2"></i> Salvar</button>

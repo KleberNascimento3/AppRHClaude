@@ -8,7 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name="coop_log")
@@ -30,10 +29,8 @@ public class LogAlteracao {
     
 	@Column(name="coop_detalhes")
 	private String detalhes;
-    
-    @NotNull
-	@Column(name="coop_matricula",insertable = true, updatable = false)
-	private int coopmatricula;
+    @Column(name="coop_matricula", insertable = true, updatable = false)
+	private Integer coopmatricula;
     
     @Column(name="coop_usuario")
 	private String usuario;
@@ -86,11 +83,11 @@ public class LogAlteracao {
 		this.detalhes = detalhes;
 	}
 
-	public int getCoopmatricula() {
+	public Integer getCoopmatricula() {
 		return coopmatricula;
 	}
 
-	public void setCoopmatricula(int coopmatricula) {
+	public void setCoopmatricula(Integer coopmatricula) {
 		this.coopmatricula = coopmatricula;
 	}
 
