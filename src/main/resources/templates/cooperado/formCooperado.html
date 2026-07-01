@@ -14,7 +14,7 @@
       <div>
         <span class="page-kicker">Cooperados</span>
         <h1 class="page-title">Novo Cooperado</h1>
-        <small>Cadastro inicial com dados cadastrais, endereco, dividas, cota parte e telefones.</small>
+        <small>Cadastro inicial com dados cadastrais, dados pessoais, documentos, endereco, dividas, cota parte e telefones.</small>
       </div>
       <a href="/cooperados" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-left"></i> Voltar</a>
     </div>
@@ -23,6 +23,8 @@
       <form method="post" data-loading>
         <ul class="nav nav-pills workflow-tabs" id="cooperadoTabs" role="tablist">
           <li class="nav-item"><button class="nav-link active" id="dados-cadastrais-tab" data-bs-toggle="tab" data-bs-target="#dados-cadastrais" type="button"><i class="bi bi-card-text"></i> Dados cadastrais</button></li>
+          <li class="nav-item"><button class="nav-link" id="dados-pessoais-tab" data-bs-toggle="tab" data-bs-target="#dados-pessoais" type="button"><i class="bi bi-person-lines-fill"></i> Dados pessoais</button></li>
+          <li class="nav-item"><button class="nav-link" id="documentos-tab" data-bs-toggle="tab" data-bs-target="#documentos" type="button"><i class="bi bi-files"></i> Documentos</button></li>
           <li class="nav-item"><button class="nav-link" id="enderecos-tab" data-bs-toggle="tab" data-bs-target="#enderecos" type="button"><i class="bi bi-geo-alt"></i> Endereco</button></li>
           <li class="nav-item"><button class="nav-link" id="dividas-tab" data-bs-toggle="tab" data-bs-target="#dividas" type="button"><i class="bi bi-receipt"></i> Dividas</button></li>
           <li class="nav-item"><button class="nav-link" id="cota-parte-tab" data-bs-toggle="tab" data-bs-target="#cota-parte" type="button"><i class="bi bi-pie-chart"></i> Cota parte</button></li>
@@ -39,10 +41,46 @@
               <div class="col-12 col-lg-8"><label class="form-label" for="coopnome">Nome completo</label><input type="text" class="form-control form-control-lg" id="coopnome" name="coopnome" placeholder="Ex: Joao da Silva Souza" required></div>
               <div class="col-12 col-lg-4"><label class="form-label" for="coopnomeguerra">Apelido</label><input type="text" class="form-control form-control-lg" id="coopnomeguerra" name="coopnomeguerra" placeholder="Ex: Joao Silva" required></div>
             </div>
-            <div class="d-flex justify-content-end mt-4"><button class="btn btn-primary" type="button" onclick="document.getElementById('enderecos-tab').click()">Proximo <i class="bi bi-arrow-right"></i></button></div>
+            <div class="d-flex justify-content-end mt-4"><button class="btn btn-primary" type="button" onclick="document.getElementById('dados-pessoais-tab').click()">Proximo <i class="bi bi-arrow-right"></i></button></div>
           </div>
 
-          <div class="tab-pane fade" id="enderecos" role="tabpanel">
+                    <div class="tab-pane fade" id="dados-pessoais" role="tabpanel">
+            <div class="form-section-heading"><div><span>Opcional</span><h2>Dados pessoais</h2></div><i class="bi bi-person-lines-fill"></i></div>
+            <div class="row g-3">
+              <div class="col-md-4"><label class="form-label">Pai</label><input class="form-control" name="cooppai"></div>
+              <div class="col-md-4"><label class="form-label">Mae</label><input class="form-control" name="coopmae"></div>
+              <div class="col-md-4"><label class="form-label">Conjuge</label><input class="form-control" name="coopconjuge"></div>
+              <div class="col-md-2"><label class="form-label">Filhos</label><input class="form-control" type="number" name="coopnumfilhos"></div>
+              <div class="col-md-3"><label class="form-label">Data nasc.</label><input class="form-control" type="date" name="coopdatanasc"></div>
+              <div class="col-md-4"><label class="form-label">Local nasc.</label><input class="form-control" name="cooplocalnasc"></div>
+              <div class="col-md-3"><label class="form-label">Sexo</label><select class="form-select" name="coopsexo"><option value="">Selecione</option><option value="M">M</option><option value="F">F</option></select></div>
+              <div class="col-md-3"><label class="form-label">Estado civil</label><input class="form-control" name="coopestadocivil"></div>
+              <div class="col-md-3"><label class="form-label">Escolaridade</label><input class="form-control" name="coopescolaridade"></div>
+              <div class="col-md-3"><label class="form-label">Nacionalidade</label><input class="form-control" name="coopnacionalidade"></div>
+              <div class="col-md-3"><label class="form-label">Email</label><input class="form-control" type="email" name="coopemail"></div>
+            </div>
+            <div class="d-flex justify-content-between mt-4"><button class="btn btn-outline-primary" type="button" onclick="document.getElementById('dados-cadastrais-tab').click()"><i class="bi bi-arrow-left"></i> Voltar</button><button class="btn btn-primary" type="button" onclick="document.getElementById('documentos-tab').click()">Proximo <i class="bi bi-arrow-right"></i></button></div>
+          </div>
+
+          <div class="tab-pane fade" id="documentos" role="tabpanel">
+            <div class="form-section-heading"><div><span>Opcional</span><h2>Documentos</h2></div><i class="bi bi-files"></i></div>
+            <div class="row g-3">
+              <div class="col-md-3"><label class="form-label">RG</label><input class="form-control" name="cooprg"></div>
+              <div class="col-md-2"><label class="form-label">Orgao RG</label><input class="form-control" name="cooprgoem"></div>
+              <div class="col-md-3"><label class="form-label">Emissao RG</label><input class="form-control" type="date" name="cooprgemis"></div>
+              <div class="col-md-3"><label class="form-label">CPF</label><input class="form-control" name="coopcpf"></div>
+              <div class="col-md-3"><label class="form-label">INSS</label><input class="form-control" type="number" name="coopinss"></div>
+              <div class="col-md-3"><label class="form-label">Passaporte</label><input class="form-control" name="cooppassaporte"></div>
+              <div class="col-md-3"><label class="form-label">Expedicao pass.</label><input class="form-control" type="date" name="coopdataexpedicao"></div>
+              <div class="col-md-3"><label class="form-label">Venc. pass.</label><input class="form-control" type="date" name="coopdtvenctopass"></div>
+              <div class="col-md-3"><label class="form-label">Orgao pass.</label><input class="form-control" name="coopoempass"></div>
+              <div class="col-md-3"><label class="form-label">NIE</label><input class="form-control" name="coopnrnie"></div>
+              <div class="col-md-3"><label class="form-label">Venc. NIE</label><input class="form-control" type="date" name="coopnievencto"></div>
+              <div class="col-md-3"><label class="form-label">EB2</label><input class="form-control" name="coopeb2"></div>
+            </div>
+            <div class="d-flex justify-content-between mt-4"><button class="btn btn-outline-primary" type="button" onclick="document.getElementById('dados-pessoais-tab').click()"><i class="bi bi-arrow-left"></i> Voltar</button><button class="btn btn-primary" type="button" onclick="document.getElementById('enderecos-tab').click()">Proximo <i class="bi bi-arrow-right"></i></button></div>
+          </div>
+<div class="tab-pane fade" id="enderecos" role="tabpanel">
             <div class="form-section-heading"><div><span>Opcional</span><h2>Endereco</h2></div><i class="bi bi-geo-alt-fill"></i></div>
             <div class="row g-3">
               <div class="col-md-8"><label class="form-label">Endereco</label><input class="form-control" name="coopendendereco" placeholder="Rua, numero e complemento"></div>
@@ -52,7 +90,7 @@
               <div class="col-md-3"><label class="form-label">CEP</label><input class="form-control" name="coopcep"></div>
               <div class="col-md-3"><label class="form-label">Pais</label><input class="form-control" name="cooppais" value="Brasil"></div>
             </div>
-            <div class="d-flex justify-content-between mt-4"><button class="btn btn-outline-primary" type="button" onclick="document.getElementById('dados-cadastrais-tab').click()"><i class="bi bi-arrow-left"></i> Voltar</button><button class="btn btn-primary" type="button" onclick="document.getElementById('dividas-tab').click()">Proximo <i class="bi bi-arrow-right"></i></button></div>
+            <div class="d-flex justify-content-between mt-4"><button class="btn btn-outline-primary" type="button" onclick="document.getElementById('documentos-tab').click()"><i class="bi bi-arrow-left"></i> Voltar</button><button class="btn btn-primary" type="button" onclick="document.getElementById('dividas-tab').click()">Proximo <i class="bi bi-arrow-right"></i></button></div>
           </div>
 
           <div class="tab-pane fade" id="dividas" role="tabpanel">

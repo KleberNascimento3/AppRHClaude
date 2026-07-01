@@ -16,12 +16,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.AppRH.AppRH.models.Coopcadastro;
+import com.AppRH.AppRH.models.Coopdadospessoais;
+import com.AppRH.AppRH.models.Coopdocumentos;
 import com.AppRH.AppRH.models.Coopendereco;
 import com.AppRH.AppRH.models.Cooperado;
 import com.AppRH.AppRH.models.Cotaparte;
 import com.AppRH.AppRH.models.Dividas;
 import com.AppRH.AppRH.models.LogAlteracao;
 import com.AppRH.AppRH.repository.CoopcadastroRepository;
+import com.AppRH.AppRH.repository.DadosPessoaisRepository;
+import com.AppRH.AppRH.repository.DocumentosRepository;
 import com.AppRH.AppRH.repository.CooperadoRepository;
 import com.AppRH.AppRH.repository.CotaRepository;
 import com.AppRH.AppRH.repository.DividasRepository;
@@ -40,6 +44,12 @@ public class CooperadoAbasController {
 
     @Autowired
     private EnderecoRepository enderecoRepository;
+
+    @Autowired
+    private DadosPessoaisRepository dadosPessoaisRepository;
+
+    @Autowired
+    private DocumentosRepository documentosRepository;
 
     @Autowired
     private DividasRepository dividasRepository;
@@ -222,6 +232,140 @@ public class CooperadoAbasController {
         return "redirect:/cooperado/" + matricula + "#cota-parte";
     }
 
+
+    @PostMapping("/cooperado/{matricula}/dados-pessoais")
+    public String criarDadosPessoais(@PathVariable("matricula") int matricula,
+            @RequestParam(value = "cooppai", required = false) String pai,
+            @RequestParam(value = "coopmae", required = false) String mae,
+            @RequestParam(value = "coopconjuge", required = false) String conjuge,
+            @RequestParam(value = "coopnumfilhos", required = false) Integer numFilhos,
+            @RequestParam(value = "cooplocalnasc", required = false) String localNascimento,
+            @RequestParam(value = "coopdatanasc", required = false) String dataNascimento,
+            @RequestParam(value = "coopescolaridade", required = false) String escolaridade,
+            @RequestParam(value = "coopestadocivil", required = false) String estadoCivil,
+            @RequestParam(value = "coopsexo", required = false) String sexo,
+            @RequestParam(value = "coopnacionalidade", required = false) String nacionalidade,
+            @RequestParam(value = "coopemail", required = false) String email,
+            @RequestParam(value = "coopnrdep", required = false) Integer nrDep,
+            @RequestParam(value = "coopaposentado", required = false) String aposentado,
+            @RequestParam(value = "coopbeneficio", required = false) String beneficio,
+            @RequestParam(value = "coopdepir", required = false) Integer depIr,
+            @RequestParam(value = "coopissqn", required = false) String issqn,
+            RedirectAttributes attributes) {
+        Coopdadospessoais dados = new Coopdadospessoais();
+        preencherDadosPessoais(dados, cooperadoRepository.findByCoopmatricula(matricula), pai, mae, conjuge, numFilhos,
+                localNascimento, dataNascimento, escolaridade, estadoCivil, sexo, nacionalidade, email, nrDep,
+                aposentado, beneficio, depIr, issqn);
+        dadosPessoaisRepository.save(dados);
+        registrarLog("Dados pessoais", "INCLUSAO", "Dados pessoais incluidos", matricula);
+        attributes.addFlashAttribute("mensagem", "Dados pessoais incluidos com sucesso.");
+        return "redirect:/cooperado/" + matricula + "#dados-pessoais";
+    }
+
+    @PostMapping("/cooperado/{matricula}/dados-pessoais/{id}")
+    public String atualizarDadosPessoais(@PathVariable("matricula") int matricula, @PathVariable("id") Long id,
+            @RequestParam(value = "cooppai", required = false) String pai,
+            @RequestParam(value = "coopmae", required = false) String mae,
+            @RequestParam(value = "coopconjuge", required = false) String conjuge,
+            @RequestParam(value = "coopnumfilhos", required = false) Integer numFilhos,
+            @RequestParam(value = "cooplocalnasc", required = false) String localNascimento,
+            @RequestParam(value = "coopdatanasc", required = false) String dataNascimento,
+            @RequestParam(value = "coopescolaridade", required = false) String escolaridade,
+            @RequestParam(value = "coopestadocivil", required = false) String estadoCivil,
+            @RequestParam(value = "coopsexo", required = false) String sexo,
+            @RequestParam(value = "coopnacionalidade", required = false) String nacionalidade,
+            @RequestParam(value = "coopemail", required = false) String email,
+            @RequestParam(value = "coopnrdep", required = false) Integer nrDep,
+            @RequestParam(value = "coopaposentado", required = false) String aposentado,
+            @RequestParam(value = "coopbeneficio", required = false) String beneficio,
+            @RequestParam(value = "coopdepir", required = false) Integer depIr,
+            @RequestParam(value = "coopissqn", required = false) String issqn,
+            RedirectAttributes attributes) {
+        Optional<Coopdadospessoais> optional = dadosPessoaisRepository.findById(id);
+        if (optional.isPresent()) {
+            preencherDadosPessoais(optional.get(), cooperadoRepository.findByCoopmatricula(matricula), pai, mae, conjuge,
+                    numFilhos, localNascimento, dataNascimento, escolaridade, estadoCivil, sexo, nacionalidade, email,
+                    nrDep, aposentado, beneficio, depIr, issqn);
+            dadosPessoaisRepository.save(optional.get());
+            registrarLog("Dados pessoais", "ALTERACAO", "Dados pessoais alterados", matricula);
+            attributes.addFlashAttribute("mensagem", "Dados pessoais alterados com sucesso.");
+        }
+        return "redirect:/cooperado/" + matricula + "#dados-pessoais";
+    }
+
+    @PostMapping("/cooperado/{matricula}/dados-pessoais/{id}/excluir")
+    public String excluirDadosPessoais(@PathVariable("matricula") int matricula, @PathVariable("id") Long id,
+            RedirectAttributes attributes) {
+        dadosPessoaisRepository.deleteById(id);
+        registrarLog("Dados pessoais", "EXCLUSAO", "Dados pessoais excluidos", matricula);
+        attributes.addFlashAttribute("mensagem", "Dados pessoais excluidos com sucesso.");
+        return "redirect:/cooperado/" + matricula + "#dados-pessoais";
+    }
+
+    @PostMapping("/cooperado/{matricula}/documentos")
+    public String criarDocumento(@PathVariable("matricula") int matricula,
+            @RequestParam(value = "cooprg", required = false) String rg,
+            @RequestParam(value = "cooprgoem", required = false) String rgOem,
+            @RequestParam(value = "cooprgemis", required = false) String rgEmissao,
+            @RequestParam(value = "coopcpf", required = false) String cpf,
+            @RequestParam(value = "coopinss", required = false) Integer inss,
+            @RequestParam(value = "cooppassaporte", required = false) String passaporte,
+            @RequestParam(value = "coopdataexpedicao", required = false) String dataExpedicao,
+            @RequestParam(value = "coopdtvenctopass", required = false) String vencimentoPassaporte,
+            @RequestParam(value = "coopoempass", required = false) String oemPassaporte,
+            @RequestParam(value = "coopnrnie", required = false) String nrNie,
+            @RequestParam(value = "coopnievencto", required = false) String vencimentoNie,
+            @RequestParam(value = "coopeb2", required = false) String eb2,
+            @RequestParam(value = "coopeb2dtinicio", required = false) String eb2Inicio,
+            @RequestParam(value = "coopeb2dtvencto", required = false) String eb2Vencimento,
+            RedirectAttributes attributes) {
+        Coopdocumentos documento = new Coopdocumentos();
+        preencherDocumento(documento, cooperadoRepository.findByCoopmatricula(matricula), rg, rgOem, rgEmissao, cpf, inss,
+                passaporte, dataExpedicao, vencimentoPassaporte, oemPassaporte, nrNie, vencimentoNie, eb2, eb2Inicio,
+                eb2Vencimento);
+        documentosRepository.save(documento);
+        registrarLog("Documentos", "INCLUSAO", "Documento incluido", matricula);
+        attributes.addFlashAttribute("mensagem", "Documento incluido com sucesso.");
+        return "redirect:/cooperado/" + matricula + "#documentos";
+    }
+
+    @PostMapping("/cooperado/{matricula}/documentos/{id}")
+    public String atualizarDocumento(@PathVariable("matricula") int matricula, @PathVariable("id") Long id,
+            @RequestParam(value = "cooprg", required = false) String rg,
+            @RequestParam(value = "cooprgoem", required = false) String rgOem,
+            @RequestParam(value = "cooprgemis", required = false) String rgEmissao,
+            @RequestParam(value = "coopcpf", required = false) String cpf,
+            @RequestParam(value = "coopinss", required = false) Integer inss,
+            @RequestParam(value = "cooppassaporte", required = false) String passaporte,
+            @RequestParam(value = "coopdataexpedicao", required = false) String dataExpedicao,
+            @RequestParam(value = "coopdtvenctopass", required = false) String vencimentoPassaporte,
+            @RequestParam(value = "coopoempass", required = false) String oemPassaporte,
+            @RequestParam(value = "coopnrnie", required = false) String nrNie,
+            @RequestParam(value = "coopnievencto", required = false) String vencimentoNie,
+            @RequestParam(value = "coopeb2", required = false) String eb2,
+            @RequestParam(value = "coopeb2dtinicio", required = false) String eb2Inicio,
+            @RequestParam(value = "coopeb2dtvencto", required = false) String eb2Vencimento,
+            RedirectAttributes attributes) {
+        Optional<Coopdocumentos> optional = documentosRepository.findById(id);
+        if (optional.isPresent()) {
+            preencherDocumento(optional.get(), cooperadoRepository.findByCoopmatricula(matricula), rg, rgOem, rgEmissao,
+                    cpf, inss, passaporte, dataExpedicao, vencimentoPassaporte, oemPassaporte, nrNie, vencimentoNie,
+                    eb2, eb2Inicio, eb2Vencimento);
+            documentosRepository.save(optional.get());
+            registrarLog("Documentos", "ALTERACAO", "Documento alterado", matricula);
+            attributes.addFlashAttribute("mensagem", "Documento alterado com sucesso.");
+        }
+        return "redirect:/cooperado/" + matricula + "#documentos";
+    }
+
+    @PostMapping("/cooperado/{matricula}/documentos/{id}/excluir")
+    public String excluirDocumento(@PathVariable("matricula") int matricula, @PathVariable("id") Long id,
+            RedirectAttributes attributes) {
+        documentosRepository.deleteById(id);
+        registrarLog("Documentos", "EXCLUSAO", "Documento excluido", matricula);
+        attributes.addFlashAttribute("mensagem", "Documento excluido com sucesso.");
+        return "redirect:/cooperado/" + matricula + "#documentos";
+    }
     private Coopcadastro buscarOuCriarCadastro(Cooperado cooperado, Long cadastroId) {
         if (cadastroId != null) {
             Optional<Coopcadastro> optional = coopcadastroRepository.findById(cadastroId);
@@ -270,7 +414,49 @@ public class CooperadoAbasController {
         cota.setCoopdatapagamento(parseSqlDate(dataPagamento));
         cota.setCoopflagcotaparte(1);
     }
+    private void preencherDadosPessoais(Coopdadospessoais dados, Cooperado cooperado, String pai, String mae,
+            String conjuge, Integer numFilhos, String localNascimento, String dataNascimento, String escolaridade,
+            String estadoCivil, String sexo, String nacionalidade, String email, Integer nrDep, String aposentado,
+            String beneficio, Integer depIr, String issqn) {
+        dados.setCooperado(cooperado);
+        dados.setCooppai(pai);
+        dados.setCoopmae(mae);
+        dados.setCoopconjuge(conjuge);
+        dados.setCoopnumfilhos(numFilhos);
+        dados.setCooplocalnasc(localNascimento);
+        dados.setCoopdatanasc(parseSqlDate(dataNascimento));
+        dados.setCoopescolaridade(escolaridade);
+        dados.setCoopestadocivil(estadoCivil);
+        dados.setCoopsexo(sexo);
+        dados.setCoopnacionalidade(nacionalidade);
+        dados.setCoopemail(email);
+        dados.setCoopnrdep(nrDep);
+        dados.setCoopaposentado(aposentado);
+        dados.setCoopbeneficio(beneficio);
+        dados.setCoopdepir(depIr);
+        dados.setCoopissqn(issqn);
+    }
 
+    private void preencherDocumento(Coopdocumentos documento, Cooperado cooperado, String rg, String rgOem,
+            String rgEmissao, String cpf, Integer inss, String passaporte, String dataExpedicao,
+            String vencimentoPassaporte, String oemPassaporte, String nrNie, String vencimentoNie, String eb2,
+            String eb2Inicio, String eb2Vencimento) {
+        documento.setCooperado(cooperado);
+        documento.setCooprg(rg);
+        documento.setCooprgoem(rgOem);
+        documento.setCooprgemis(parseSqlDate(rgEmissao));
+        documento.setCoopcpf(cpf);
+        documento.setCoopinss(inss);
+        documento.setCooppassaporte(passaporte);
+        documento.setCoopdataexpedicao(parseSqlDate(dataExpedicao));
+        documento.setCoopdtvenctopass(parseSqlDate(vencimentoPassaporte));
+        documento.setCoopoempass(oemPassaporte);
+        documento.setCoopnrnie(nrNie);
+        documento.setCoopnievencto(parseSqlDate(vencimentoNie));
+        documento.setCoopeb2(eb2);
+        documento.setCoopeb2dtinicio(parseSqlDate(eb2Inicio));
+        documento.setCoopeb2dtvencto(parseSqlDate(eb2Vencimento));
+    }
     private java.time.LocalDate parseLocalDate(String valor) {
         return StringUtils.hasText(valor) ? java.time.LocalDate.parse(valor) : null;
     }

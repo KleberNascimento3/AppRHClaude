@@ -44,6 +44,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.AppRH.AppRH.models.Coopcadastro;
+import com.AppRH.AppRH.models.Coopdadospessoais;
+import com.AppRH.AppRH.models.Coopdocumentos;
 import com.AppRH.AppRH.models.Coopendereco;
 import com.AppRH.AppRH.models.Cooperado;
 import com.AppRH.AppRH.models.Cotaparte;
@@ -52,6 +54,8 @@ import com.AppRH.AppRH.models.Lgpd;
 import com.AppRH.AppRH.models.LogAlteracao;
 import com.AppRH.AppRH.models.Telefone;
 import com.AppRH.AppRH.repository.CoopcadastroRepository;
+import com.AppRH.AppRH.repository.DadosPessoaisRepository;
+import com.AppRH.AppRH.repository.DocumentosRepository;
 import com.AppRH.AppRH.repository.CooperadoRepository;
 import com.AppRH.AppRH.repository.CotaRepository;
 import com.AppRH.AppRH.repository.DividasRepository;
@@ -103,6 +107,12 @@ public class CooperadoController {
 	
 	@Autowired
 	private DividasRepository dividasRepository;
+
+	@Autowired
+	private DadosPessoaisRepository dadosPessoaisRepository;
+
+	@Autowired
+	private DocumentosRepository documentosRepository;
 	
 	//INSERE COOPERADO
 	@PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
@@ -131,7 +141,37 @@ public class CooperadoController {
             @RequestParam(value = "cotaDataVencimento", required = false) String cotaDataVencimento,
             @RequestParam(value = "cotaDataPagamento", required = false) String cotaDataPagamento,
             @RequestParam(value = "cooptelnumero", required = false) String cooptelnumero,
-            @RequestParam(value = "coopteltipo", required = false) String coopteltipo) {
+            @RequestParam(value = "coopteltipo", required = false) String coopteltipo,
+            @RequestParam(value = "cooppai", required = false) String cooppai,
+            @RequestParam(value = "coopmae", required = false) String coopmae,
+            @RequestParam(value = "coopconjuge", required = false) String coopconjuge,
+            @RequestParam(value = "coopnumfilhos", required = false) Integer coopnumfilhos,
+            @RequestParam(value = "cooplocalnasc", required = false) String cooplocalnasc,
+            @RequestParam(value = "coopdatanasc", required = false) String coopdatanasc,
+            @RequestParam(value = "coopescolaridade", required = false) String coopescolaridade,
+            @RequestParam(value = "coopestadocivil", required = false) String coopestadocivil,
+            @RequestParam(value = "coopsexo", required = false) String coopsexo,
+            @RequestParam(value = "coopnacionalidade", required = false) String coopnacionalidade,
+            @RequestParam(value = "coopemail", required = false) String coopemail,
+            @RequestParam(value = "coopnrdep", required = false) Integer coopnrdep,
+            @RequestParam(value = "coopaposentado", required = false) String coopaposentado,
+            @RequestParam(value = "coopbeneficio", required = false) String coopbeneficio,
+            @RequestParam(value = "coopdepir", required = false) Integer coopdepir,
+            @RequestParam(value = "coopissqn", required = false) String coopissqn,
+            @RequestParam(value = "cooprg", required = false) String cooprg,
+            @RequestParam(value = "cooprgoem", required = false) String cooprgoem,
+            @RequestParam(value = "cooprgemis", required = false) String cooprgemis,
+            @RequestParam(value = "coopcpf", required = false) String coopcpf,
+            @RequestParam(value = "coopinss", required = false) Integer coopinss,
+            @RequestParam(value = "cooppassaporte", required = false) String cooppassaporte,
+            @RequestParam(value = "coopdataexpedicao", required = false) String coopdataexpedicao,
+            @RequestParam(value = "coopdtvenctopass", required = false) String coopdtvenctopass,
+            @RequestParam(value = "coopoempass", required = false) String coopoempass,
+            @RequestParam(value = "coopnrnie", required = false) String coopnrnie,
+            @RequestParam(value = "coopnievencto", required = false) String coopnievencto,
+            @RequestParam(value = "coopeb2", required = false) String coopeb2,
+            @RequestParam(value = "coopeb2dtinicio", required = false) String coopeb2dtinicio,
+            @RequestParam(value = "coopeb2dtvencto", required = false) String coopeb2dtvencto) {
 		if(result.hasErrors()) {
 			attributes.addFlashAttribute("mensagem","Verifique os campos....");
 			return "redirect:/cadastrarCooperado";
@@ -428,6 +468,9 @@ public class CooperadoController {
 
 	    Iterable<Coopendereco> enderecos = er.findByCooperado(cooperado);
 	    mv.addObject("enderecos", enderecos);
+
+	    mv.addObject("dadosPessoais", dadosPessoaisRepository.findByCooperado(cooperado));
+	    mv.addObject("documentos", documentosRepository.findByCooperado(cooperado));
 	    mv.addObject("fichaMatriculaExiste", fichaMatriculaExiste(coop_matricula));
 	    mv.addObject("fichaMatriculaUrl", "/uploads/fichas/" + coop_matricula + ".pdf");
 Iterable<Coopcadastro> coopcadastroList = cc.findByCooperado(cooperado);
@@ -874,6 +917,27 @@ Iterable<Coopcadastro> coopcadastroList = cc.findByCooperado(cooperado);
 	
 	
 
+    private boolean temDadosPessoais(String... valores) {
+        for (String valor : valores) {
+            if (valor != null && !valor.trim().isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean temDocumentos(String... valores) {
+        for (String valor : valores) {
+            if (valor != null && !valor.trim().isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private java.sql.Date parseSqlDateCooperado(String valor) {
+        return valor != null && !valor.trim().isEmpty() ? java.sql.Date.valueOf(valor) : null;
+    }
     private boolean fichaMatriculaExiste(int matricula) {
         return fichaMatriculaArquivo(matricula).exists();
     }
