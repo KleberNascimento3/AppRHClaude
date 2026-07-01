@@ -51,7 +51,7 @@
         <li class="nav-item"><button class="nav-link" id="dividas-tab" data-bs-toggle="tab" data-bs-target="#dividas" type="button"><i class="bi bi-receipt"></i> Dividas</button></li>
         <li class="nav-item"><button class="nav-link" id="cota-parte-tab" data-bs-toggle="tab" data-bs-target="#cota-parte" type="button"><i class="bi bi-pie-chart"></i> Cota parte</button></li>
         <li class="nav-item"><button class="nav-link" id="telefones-tab" data-bs-toggle="tab" data-bs-target="#telefones" type="button"><i class="bi bi-telephone"></i> Telefones</button></li>
-        <li class="nav-item" sec:authorize="hasAnyRole('ADMIN', 'DEVELOPER', 'DESENVOLVEDOR')"><button class="nav-link" id="auditoria-tab" data-bs-toggle="tab" data-bs-target="#auditoria" type="button"><i class="bi bi-clock-history"></i> Auditoria</button></li>
+        <li class="nav-item"><button class="nav-link" id="ficha-matricula-tab" data-bs-toggle="tab" data-bs-target="#ficha-matricula" type="button"><i class="bi bi-file-earmark-pdf"></i> Ficha de matricula</button></li>
       </ul>
 
       <div class="tab-content workflow-tab-content">
@@ -123,10 +123,31 @@
           </form>
           <div class="table-responsive"><table class="table"><thead><tr><th>Numero</th><th>Tipo</th><th>Acoes</th></tr></thead><tbody><tr th:each="telefone : ${telefones}"><td th:text="${telefone.cooptelnumero}"></td><td th:text="${telefone.coopteltipo}"></td><td class="table-actions"><a th:href="${(#mvc.url('CC#deletarTelefone').arg(0, telefone.cooptelindexcod)).build()}" class="btn btn-sm btn-outline-danger" data-confirm-delete="este telefone"><i class="bi bi-trash"></i></a></td></tr></tbody></table></div>
         </div>
-
-        <div class="tab-pane fade" id="auditoria" role="tabpanel" sec:authorize="hasAnyRole('ADMIN', 'DEVELOPER', 'DESENVOLVEDOR')">
-          <div class="form-section-heading"><div><span>Historico</span><h2>Auditoria de alteracoes</h2></div><i class="bi bi-clock-history"></i></div>
-          <div class="table-responsive"><table class="table"><thead><tr><th>Data</th><th>Usuario</th><th>Tabela</th><th>Operacao</th><th>Detalhes</th></tr></thead><tbody><tr th:each="log : ${logs}"><td th:text="${#temporals.format(log.data, 'dd/MM/yyyy HH:mm')}"></td><td th:text="${log.usuario}"></td><td th:text="${log.tabela}"></td><td><span class="badge bg-primary" th:text="${log.operacao}"></span></td><td th:text="${log.detalhes}"></td></tr><tr th:if="${logs == null or #lists.isEmpty(logs)}"><td colspan="5" class="empty-state py-4">Nenhum registro de auditoria encontrado.</td></tr></tbody></table></div>
+        <div class="tab-pane fade" id="ficha-matricula" role="tabpanel">
+          <div class="form-section-heading"><div><span>Documento</span><h2>Ficha de matricula</h2></div><i class="bi bi-file-earmark-pdf-fill"></i></div>
+          <div class="row g-3 align-items-stretch">
+            <div class="col-lg-5">
+              <form th:action="@{/cooperado/{matricula}/ficha-matricula(matricula=${cooperado.coopmatricula})}" method="post" enctype="multipart/form-data" class="h-100" data-loading>
+                <label class="form-label" for="fichaMatricula">Arquivo PDF</label>
+                <input class="form-control" id="fichaMatricula" name="fichaMatricula" type="file" accept="application/pdf,.pdf" required>
+                <div class="d-flex justify-content-end mt-3"><button class="btn btn-primary" type="submit"><i class="bi bi-upload"></i> Salvar ficha</button></div>
+              </form>
+            </div>
+            <div class="col-lg-7">
+              <div class="empty-state py-4" th:if="${!fichaMatriculaExiste}">
+                Nenhuma ficha de matricula anexada.
+              </div>
+              <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap p-3 border rounded" th:if="${fichaMatriculaExiste}">
+                <div><strong>Ficha anexada</strong><br><small>PDF da ficha de matricula deste cooperado.</small></div>
+                <div class="d-flex gap-2">
+                  <a class="btn btn-outline-primary" th:href="@{|${fichaMatriculaUrl}?v=${#dates.createNow().time}|}" target="_blank"><i class="bi bi-box-arrow-up-right"></i> Abrir PDF</a>
+                  <form th:action="@{/cooperado/{matricula}/ficha-matricula/excluir(matricula=${cooperado.coopmatricula})}" method="post" class="d-inline">
+                    <button class="btn btn-outline-danger" type="submit" onclick="return confirm('Excluir ficha de matricula?')"><i class="bi bi-trash"></i></button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

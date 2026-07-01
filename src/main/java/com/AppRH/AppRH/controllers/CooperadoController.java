@@ -3,6 +3,7 @@ package com.AppRH.AppRH.controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -65,6 +66,7 @@ import com.AppRH.AppRH.service.CooperadoService;
 public class CooperadoController {
 
 	private static final Logger log = LoggerFactory.getLogger(CooperadoController.class);
+	private static final String FICHAS_DIR = "uploads/fichas";
 	
 	@Autowired
 	private CooperadoRepository cr;
@@ -426,12 +428,9 @@ public class CooperadoController {
 
 	    Iterable<Coopendereco> enderecos = er.findByCooperado(cooperado);
 	    mv.addObject("enderecos", enderecos);
-
-	    if (usuarioPodeVerAuditoria()) {
-        mv.addObject("logs", la.findByCoopmatriculaOrderByDataDesc(coop_matricula));
-    }
-
-	    Iterable<Coopcadastro> coopcadastroList = cc.findByCooperado(cooperado);
+	    mv.addObject("fichaMatriculaExiste", fichaMatriculaExiste(coop_matricula));
+	    mv.addObject("fichaMatriculaUrl", "/uploads/fichas/" + coop_matricula + ".pdf");
+Iterable<Coopcadastro> coopcadastroList = cc.findByCooperado(cooperado);
 
 	    Coopcadastro unicoCadastro =
 	        coopcadastroList.iterator().hasNext()
@@ -640,6 +639,61 @@ public class CooperadoController {
 
 	    return "redirect:/cooperado/" + matricula;
 	}
+	@PreAuthorize("hasAnyRole('ADMIN', 'USUARIO','DEVELOPER','DESENVOLVEDOR')")
+	@PostMapping("/cooperado/{coopmatricula}/ficha-matricula")
+	public String uploadFichaMatricula(@PathVariable("coopmatricula") int coopMatricula,
+	                                  @RequestParam("fichaMatricula") MultipartFile fichaMatricula,
+	                                  RedirectAttributes attributes) {
+	    if (fichaMatricula == null || fichaMatricula.isEmpty()) {
+	        attributes.addFlashAttribute("erro", "Selecione um arquivo PDF para anexar.");
+	        return "redirect:/cooperado/" + coopMatricula + "#ficha-matricula";
+	    }
+
+	    String nomeArquivo = fichaMatricula.getOriginalFilename() != null ? fichaMatricula.getOriginalFilename().toLowerCase() : "";
+	    String contentType = fichaMatricula.getContentType() != null ? fichaMatricula.getContentType().toLowerCase() : "";
+	    if (!nomeArquivo.endsWith(".pdf") && !"application/pdf".equals(contentType)) {
+	        attributes.addFlashAttribute("erro", "A ficha de matricula precisa ser um arquivo PDF.");
+	        return "redirect:/cooperado/" + coopMatricula + "#ficha-matricula";
+	    }
+
+	    try {
+	        File arquivoDestino = fichaMatriculaArquivo(coopMatricula);
+	        fichaMatricula.transferTo(arquivoDestino);
+	        salvarFichaTambemNoCodigoFonte(coopMatricula, arquivoDestino);
+	        registrarLogCooperado("Ficha de matricula", "ALTERACAO", "Ficha de matricula anexada/substituida", coopMatricula);
+	        attributes.addFlashAttribute("mensagem", "Ficha de matricula salva com sucesso!");
+	    } catch (Exception e) {
+	        log.error("Erro ao salvar ficha de matricula do cooperado {}", coopMatricula, e);
+	        attributes.addFlashAttribute("erro", "Nao foi possivel salvar a ficha de matricula.");
+	    }
+
+	    return "redirect:/cooperado/" + coopMatricula + "#ficha-matricula";
+	}
+
+	@PreAuthorize("hasAnyRole('ADMIN','DEVELOPER','DESENVOLVEDOR')")
+	@PostMapping("/cooperado/{coopmatricula}/ficha-matricula/excluir")
+	public String excluirFichaMatricula(@PathVariable("coopmatricula") int coopMatricula,
+	                                  RedirectAttributes attributes) {
+	    File arquivo = fichaMatriculaArquivo(coopMatricula);
+	    File arquivoFonte = fichaMatriculaArquivoFonte(coopMatricula);
+	    boolean excluiu = false;
+
+	    if (arquivo.exists()) {
+	        excluiu = arquivo.delete();
+	    }
+	    if (arquivoFonte.exists()) {
+	        arquivoFonte.delete();
+	    }
+
+	    if (excluiu) {
+	        registrarLogCooperado("Ficha de matricula", "EXCLUSAO", "Ficha de matricula excluida", coopMatricula);
+	        attributes.addFlashAttribute("mensagem", "Ficha de matricula excluida com sucesso!");
+	    } else {
+	        attributes.addFlashAttribute("erro", "Nenhuma ficha de matricula foi encontrada para excluir.");
+	    }
+
+	    return "redirect:/cooperado/" + coopMatricula + "#ficha-matricula";
+	}
 	@PreAuthorize("hasAnyRole('ADMIN','DEVELOPER')")
 	public String detalhesTelefonePost(@PathVariable("coopmatricula") int coop_matricula, @Valid Telefone telefone,
 			BindingResult result, RedirectAttributes attributes) {
@@ -820,6 +874,30 @@ public class CooperadoController {
 	
 	
 
+    private boolean fichaMatriculaExiste(int matricula) {
+        return fichaMatriculaArquivo(matricula).exists();
+    }
+
+    private File fichaMatriculaArquivo(int matricula) {
+        File pasta = new File(System.getProperty("user.dir"), "target/classes/static/" + FICHAS_DIR);
+        if (!pasta.exists()) {
+            pasta.mkdirs();
+        }
+        return new File(pasta, matricula + ".pdf");
+    }
+
+    private File fichaMatriculaArquivoFonte(int matricula) {
+        File pasta = new File(System.getProperty("user.dir"), "src/main/resources/static/" + FICHAS_DIR);
+        if (!pasta.exists()) {
+            pasta.mkdirs();
+        }
+        return new File(pasta, matricula + ".pdf");
+    }
+
+    private void salvarFichaTambemNoCodigoFonte(int matricula, File arquivoDestino) throws IOException {
+        File arquivoFonte = fichaMatriculaArquivoFonte(matricula);
+        Files.copy(arquivoDestino.toPath(), arquivoFonte.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+    }
     private boolean usuarioPodeVerAuditoria() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
