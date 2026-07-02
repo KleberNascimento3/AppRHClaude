@@ -59,7 +59,18 @@
       <div class="tab-content workflow-tab-content">
         <div class="tab-pane fade show active" id="dados-cadastrais" role="tabpanel">
           <div class="form-section-heading"><div><span>Cadastro</span><h2>Dados cadastrais</h2></div><i class="bi bi-card-checklist"></i></div>
-          <form th:action="@{/cooperado/{matricula}/dados-cadastrais(matricula=${cooperado.coopmatricula})}" method="post" data-loading>
+          <div class="table-responsive mb-3">
+            <table class="table">
+              <tbody>
+                <tr><th>Nome completo</th><td th:text="${cooperado.coopnome}"></td><th>Apelido</th><td th:text="${cooperado.coopnomeguerra}"></td></tr>
+                <tr><th>Data cadastro</th><td th:text="${coopcadastro != null ? coopcadastro.coopdatacadastro : '-'}"></td><th>Data admissao</th><td th:text="${coopcadastro != null ? coopcadastro.coopdataadmissao : '-'}"></td></tr>
+                <tr><th>Data desligamento</th><td th:text="${coopcadastro != null ? coopcadastro.coopdatadesligamento : '-'}"></td><th>Status</th><td th:text="${coopcadastro != null ? coopcadastro.coopcooperado : '-'}"></td></tr>
+                <tr><th>Motivo desligamento</th><td th:text="${coopcadastro != null ? coopcadastro.coopmotivodesl : '-'}"></td><th>Restricao</th><td th:text="${coopcadastro != null ? coopcadastro.cooprestricao : '-'}"></td></tr>
+                <tr><th>Informacoes</th><td colspan="3" th:text="${coopcadastro != null ? coopcadastro.coopinformacoes : '-'}"></td></tr>
+                <tr><th>Anotacoes</th><td colspan="3" th:text="${coopcadastro != null ? coopcadastro.coopanotacoes : '-'}"></td></tr>
+              </tbody>
+            </table>
+          </div>          <form th:action="@{/cooperado/{matricula}/dados-cadastrais(matricula=${cooperado.coopmatricula})}" method="post" data-loading style="display:none">
             <input type="hidden" name="coopindexcod" th:if="${coopcadastro != null}" th:value="${coopcadastro.coopindexcod}">
             <div class="row g-3">
               <div class="col-md-8"><label class="form-label">Nome completo</label><input class="form-control" name="coopnome" th:value="${cooperado.coopnome}" required></div>
@@ -79,7 +90,7 @@
 
                 <div class="tab-pane fade" id="dados-pessoais" role="tabpanel">
           <div class="form-section-heading"><div><span>Pessoal</span><h2>Dados pessoais</h2></div><i class="bi bi-person-lines-fill"></i></div>
-          <form th:action="@{/cooperado/{matricula}/dados-pessoais(matricula=${cooperado.coopmatricula})}" method="post" class="admin-inline-form mb-3" data-loading>
+          <form th:action="@{/cooperado/{matricula}/dados-pessoais(matricula=${cooperado.coopmatricula})}" method="post" class="admin-inline-form mb-3" data-loading style="display:none">
             <div><label class="form-label">Pai</label><input class="form-control" name="cooppai"></div><div><label class="form-label">Mae</label><input class="form-control" name="coopmae"></div><div><label class="form-label">Conjuge</label><input class="form-control" name="coopconjuge"></div><div><label class="form-label">Nascimento</label><input class="form-control" type="date" name="coopdatanasc"></div><div><label class="form-label">Local nasc.</label><input class="form-control" name="cooplocalnasc"></div><div><label class="form-label">Email</label><input class="form-control" type="email" name="coopemail"></div><button class="btn btn-primary align-self-end"><i class="bi bi-plus-lg"></i> Incluir</button>
           </form>
           <div class="table-responsive"><table class="table"><thead><tr><th>Pai</th><th>Mae</th><th>Nascimento</th><th>Email</th><th>Acoes</th></tr></thead><tbody>
@@ -91,7 +102,7 @@
 
         <div class="tab-pane fade" id="documentos" role="tabpanel">
           <div class="form-section-heading"><div><span>Identificacao</span><h2>Documentos</h2></div><i class="bi bi-files"></i></div>
-          <form th:action="@{/cooperado/{matricula}/documentos(matricula=${cooperado.coopmatricula})}" method="post" class="admin-inline-form mb-3" data-loading>
+          <form th:action="@{/cooperado/{matricula}/documentos(matricula=${cooperado.coopmatricula})}" method="post" class="admin-inline-form mb-3" data-loading style="display:none">
             <div><label class="form-label">RG</label><input class="form-control" name="cooprg"></div><div><label class="form-label">Orgao RG</label><input class="form-control" name="cooprgoem"></div><div><label class="form-label">Emissao RG</label><input class="form-control" type="date" name="cooprgemis"></div><div><label class="form-label">CPF</label><input class="form-control" name="coopcpf"></div><div><label class="form-label">INSS</label><input class="form-control" type="number" name="coopinss"></div><button class="btn btn-primary align-self-end"><i class="bi bi-plus-lg"></i> Incluir</button>
           </form>
           <div class="table-responsive"><table class="table"><thead><tr><th>RG</th><th>CPF</th><th>INSS</th><th>Passaporte</th><th>Acoes</th></tr></thead><tbody>
@@ -102,7 +113,7 @@
         </div>
 <div class="tab-pane fade" id="enderecos" role="tabpanel">
           <div class="form-section-heading"><div><span>Endereco</span><h2>Enderecos do cooperado</h2></div><i class="bi bi-geo-alt-fill"></i></div>
-          <form th:action="@{/cooperado/{matricula}/enderecos(matricula=${cooperado.coopmatricula})}" method="post" class="admin-inline-form mb-3" data-loading>
+          <form th:action="@{/cooperado/{matricula}/enderecos(matricula=${cooperado.coopmatricula})}" method="post" class="admin-inline-form mb-3" data-loading style="display:none">
             <div><label class="form-label">Endereco</label><input class="form-control" name="coopendendereco" required></div>
             <div><label class="form-label">Bairro</label><input class="form-control" name="coopbairro"></div>
             <div><label class="form-label">Cidade</label><input class="form-control" name="coopcidade"></div>
@@ -119,7 +130,7 @@
 
         <div class="tab-pane fade" id="dividas" role="tabpanel">
           <div class="form-section-heading"><div><span>Financeiro</span><h2>Dividas</h2></div><i class="bi bi-receipt"></i></div>
-          <form th:action="@{/cooperado/{matricula}/dividas(matricula=${cooperado.coopmatricula})}" method="post" class="admin-inline-form mb-3" data-loading>
+          <form th:action="@{/cooperado/{matricula}/dividas(matricula=${cooperado.coopmatricula})}" method="post" class="admin-inline-form mb-3" data-loading style="display:none">
             <div><label class="form-label">Descricao</label><input class="form-control" name="coopdescricao"></div><div><label class="form-label">Valor</label><input class="form-control" name="coopvalor" type="number" step="0.01"></div><div><label class="form-label">Forma pagto</label><input class="form-control" name="coopformapagto"></div><div><label class="form-label">Vencimento</label><input class="form-control" name="coopdatavencimento" type="date"></div><div><label class="form-label">Pagamento</label><input class="form-control" name="coopdatapagamento" type="date"></div><button class="btn btn-primary align-self-end"><i class="bi bi-plus-lg"></i> Incluir</button>
           </form>
           <div class="table-responsive"><table class="table"><thead><tr><th>Descricao</th><th>Valor</th><th>Forma</th><th>Vencimento</th><th>Pagamento</th><th>Acoes</th></tr></thead><tbody>
@@ -130,7 +141,7 @@
 
         <div class="tab-pane fade" id="cota-parte" role="tabpanel">
           <div class="form-section-heading"><div><span>Financeiro</span><h2>Cota parte</h2></div><i class="bi bi-pie-chart-fill"></i></div>
-          <form th:action="@{/cooperado/{matricula}/cotas(matricula=${cooperado.coopmatricula})}" method="post" class="admin-inline-form mb-3" data-loading>
+          <form th:action="@{/cooperado/{matricula}/cotas(matricula=${cooperado.coopmatricula})}" method="post" class="admin-inline-form mb-3" data-loading style="display:none">
             <div><label class="form-label">Descricao</label><input class="form-control" name="coopdescricao"></div><div><label class="form-label">Valor</label><input class="form-control" name="coopvalor" type="number" step="0.01"></div><div><label class="form-label">Forma pagto</label><input class="form-control" name="coopformapagto"></div><div><label class="form-label">Vencimento</label><input class="form-control" name="coopdatavencimento" type="date"></div><div><label class="form-label">Pagamento</label><input class="form-control" name="coopdatapagamento" type="date"></div><button class="btn btn-primary align-self-end"><i class="bi bi-plus-lg"></i> Incluir</button>
           </form>
           <div class="table-responsive"><table class="table"><thead><tr><th>Descricao</th><th>Valor</th><th>Forma</th><th>Vencimento</th><th>Pagamento</th><th>Acoes</th></tr></thead><tbody>
@@ -141,7 +152,7 @@
 
         <div class="tab-pane fade" id="telefones" role="tabpanel">
           <div class="form-section-heading"><div><span>Contato</span><h2>Telefones</h2></div><i class="bi bi-telephone-fill"></i></div>
-          <form th:action="@{/cooperado/{matricula}/telefone(matricula=${cooperado.coopmatricula})}" method="post" class="admin-inline-form mb-3" data-loading>
+          <form th:action="@{/cooperado/{matricula}/telefone(matricula=${cooperado.coopmatricula})}" method="post" class="admin-inline-form mb-3" data-loading style="display:none">
             <div><label class="form-label">Numero</label><input class="form-control" name="cooptelnumero" required></div>
             <div><label class="form-label">Tipo</label><select name="coopteltipo" class="form-select" required><option value="CELULAR">Celular</option><option value="RESIDENCIAL">Residencial</option><option value="COMERCIAL">Comercial</option></select></div>
             <button class="btn btn-primary align-self-end"><i class="bi bi-plus-lg"></i> Incluir</button>
@@ -152,7 +163,7 @@
           <div class="form-section-heading"><div><span>Documento</span><h2>Ficha de matricula</h2></div><i class="bi bi-file-earmark-pdf-fill"></i></div>
           <div class="row g-3 align-items-stretch">
             <div class="col-lg-5">
-              <form th:action="@{/cooperado/{matricula}/ficha-matricula(matricula=${cooperado.coopmatricula})}" method="post" enctype="multipart/form-data" class="h-100" data-loading>
+              <form th:action="@{/cooperado/{matricula}/ficha-matricula(matricula=${cooperado.coopmatricula})}" method="post" enctype="multipart/form-data" class="h-100" data-loading style="display:none">
                 <label class="form-label" for="fichaMatricula">Arquivo PDF</label>
                 <input class="form-control" id="fichaMatricula" name="fichaMatricula" type="file" accept="application/pdf,.pdf" required>
                 <div class="d-flex justify-content-end mt-3"><button class="btn btn-primary" type="submit"><i class="bi bi-upload"></i> Salvar ficha</button></div>
@@ -182,6 +193,31 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script th:src="@{/js/app.js}" src="/js/app.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.tab-pane > form[data-loading], #ficha-matricula form[data-loading]').forEach(function (form) {
+      if (form.dataset.editToggleReady === 'true') return;
+      form.dataset.editToggleReady = 'true';
+
+      var submit = form.querySelector('button[type="submit"], button:not([type])');
+      var submitText = submit ? submit.textContent.trim().toLowerCase() : '';
+      var label = submitText.indexOf('salvar ficha') >= 0 ? 'Anexar/Substituir ficha' : (submitText.indexOf('salvar') >= 0 ? 'Editar' : 'Incluir');
+      if (form.getAttribute('action') && form.getAttribute('action').indexOf('/dados-cadastrais') >= 0) label = 'Editar dados';
+
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'btn btn-outline-primary mb-3';
+      button.innerHTML = '<i class="bi bi-pencil-square"></i> ' + label;
+      button.addEventListener('click', function () {
+        var closed = form.style.display === 'none';
+        form.style.display = closed ? '' : 'none';
+        button.classList.toggle('btn-primary', closed);
+        button.classList.toggle('btn-outline-primary', !closed);
+      });
+      form.parentNode.insertBefore(button, form);
+    });
+  });
+</script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     var hash = window.location.hash;
