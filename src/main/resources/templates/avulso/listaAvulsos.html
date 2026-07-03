@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head><th:block th:replace="~{fragments/head :: head('Funcionarios da Empresa')}"></th:block></head>
+<body>
+<div th:insert="~{fragments/menu :: menu}"></div><div th:insert="~{fragments/toast :: toast}"></div>
+<div class="main-content"><div class="content-area">
+  <div class="page-header"><div><h1 class="page-title">Funcionarios da Empresa</h1><small>Cadastro da tabela avulsos</small></div><a href="/cadastrarFuncionarioEmpresa" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Novo Funcionário</a></div>
+  <form method="post" class="search-box" data-loading><div style="flex:1;min-width:220px"><label class="form-label">Buscar</label><input class="form-control" type="search" placeholder="Nome, e-mail ou função..." name="buscar" th:value="${buscar}"></div><button class="btn btn-primary" type="submit" style="align-self:flex-end"><i class="bi bi-search"></i> Pesquisar</button><a href="/funcionarios-empresa" class="btn btn-outline-secondary" style="align-self:flex-end"><i class="bi bi-x-lg"></i></a></form>
+  <div class="card table-card"><div class="table-responsive"><table class="table"><thead><tr><th>Matrícula</th><th>Nome</th><th>Função</th><th>Celular</th><th>E-mail</th><th class="table-actions">Ações</th></tr></thead><tbody>
+    <tr th:each="avulso: ${avulsos}">
+      <td th:text="${avulso.matricula ?: '-'}"></td>
+      <td><a th:href="@{/funcionario-empresa/{id}(id=${avulso.id})}" th:text="${avulso.nome ?: '-'}" class="fw-semibold"></a></td>
+      <td th:text="${avulso.funcao ?: '-'}"></td><td th:text="${avulso.telefonecelular ?: '-'}"></td><td th:text="${avulso.email ?: '-'}"></td>
+      <td class="table-actions"><a th:href="@{/funcionario-empresa/{id}(id=${avulso.id})}" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></a><a th:href="@{/funcionario-empresa/{id}/editar(id=${avulso.id})}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a><form th:action="@{/funcionario-empresa/{id}/excluir(id=${avulso.id})}" method="post" class="d-inline"><button class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir funcionário da empresa?')"><i class="bi bi-trash"></i></button></form></td>
+    </tr>
+    <tr th:if="${avulsos == null or #lists.size(avulsos) == 0}"><td colspan="6"><div class="empty-state"><i class="bi bi-building"></i><p>Nenhum funcionário da empresa encontrado.</p></div></td></tr>
+  </tbody></table></div></div>
+</div><div th:insert="~{fragments/footer :: footer}"></div></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script><script th:src="@{/js/app.js}" src="/js/app.js"></script>
+</body></html>

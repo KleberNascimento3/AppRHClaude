@@ -22,36 +22,36 @@ public interface CooperadoRepository extends JpaRepository<Cooperado, Integer>{
 	//Optional<Cooperado> findById(Integer id);
 	
 	//Para Buscar
-	@Query(value = "SELECT * FROM coop c", nativeQuery = true)//(Usa a anotação para poder usar o select pata buscar todos os Cooperados)
+	@Query(value = "SELECT * FROM coop c", nativeQuery = true)//(Usa a anotaÃ§Ã£o para poder usar o select pata buscar todos os Cooperados)
 	//List<Cooperado> encontrarTodos();
 	//Preparando para paginar
 	//List<Cooperado> encontrarTodos(Pageable pageable);
 	Page<Cooperado> encontrarTodos(Pageable pageable);
 	
-	//(Usa a anotação para poder usar o select para buscar todos os Cooperados Ativos)
+	//(Usa a anotaÃ§Ã£o para poder usar o select para buscar todos os Cooperados Ativos)
 	@Query(value = "SELECT * FROM coop c, coop_cadastro e WHERE c.coop_matricula = e.coop_matricula AND e.coop_cooperado = 'ATIVO'", nativeQuery = true)
 	//List<Cooperado> encontrarAtivos();
 	Page<Cooperado> encontrarAtivos(Pageable pageable);
 	
-	//(Usa a anotação para poder usar o select para buscar todos os Cooperados Inativos)
+	//(Usa a anotaÃ§Ã£o para poder usar o select para buscar todos os Cooperados Inativos)
 	@Query(value = "SELECT * FROM coop c, coop_cadastro e WHERE c.coop_matricula = e.coop_matricula AND e.coop_cooperado = 'NAO'", nativeQuery = true)
 	//List<Cooperado> encontrarInativos();
 	Page<Cooperado> encontrarInativos(Pageable pageable);
 	
 		
-	//(Usa a anotação para poder usar o select para buscar todos os Cooperados por "parte" do nome)
+	//(Usa a anotaÃ§Ã£o para poder usar o select para buscar todos os Cooperados por "parte" do nome)
 	@Query(value = "select u from Cooperado u where u.coopnome like %?1%")
 	List<Cooperado>findByCoopnomesCooperado(String coopnome);
 	
-	//(Usa a anotação para poder usar o select pata buscar todos os Cooperados pelo apelido, nome ou matrícula)
+	//(Usa a anotaÃ§Ã£o para poder usar o select pata buscar todos os Cooperados pelo apelido, nome ou matrÃ­cula)
 	@Query(value = "SELECT * FROM coop c WHERE (c.coop_nome like CONCAT('%' :param '%') OR c.coop_matricula = :param OR c.coop_nome_guerra LIKE CONCAT('%' :param '%'))", nativeQuery = true)
 	List<Cooperado>findByCoopnomesCooperados(@Param(value = "param") String coopnome);
 		
-	//(Usa a anotação para poder usar o select pata buscar todos os Cooperados Ativos pelo nome ou apelido)
+	//(Usa a anotaÃ§Ã£o para poder usar o select pata buscar todos os Cooperados Ativos pelo nome ou apelido)
 	@Query(value = "SELECT * FROM coop c, coop_cadastro e WHERE c.coop_matricula = e.coop_matricula AND e.coop_cooperado = 'ATIVO' And (c.coop_nome LIKE CONCAT('%':param '%') OR c.coop_matricula = :param OR c.coop_nome_guerra LIKE CONCAT('%' :param '%'))", nativeQuery = true)
 	List<Cooperado>findByCoopnomesCooperadoAtivo(@Param(value = "param") String coopnome);
 
-	//(Usa a anotação para poder usar o select pata buscar todos os Cooperados Inativos pelo nome ou apelido)
+	//(Usa a anotaÃ§Ã£o para poder usar o select pata buscar todos os Cooperados Inativos pelo nome ou apelido)
 	@Query(value = "SELECT * FROM coop c, coop_cadastro e WHERE c.coop_matricula = e.coop_matricula AND e.coop_cooperado = 'NAO' And (c.coop_nome LIKE CONCAT('%' :param '%') OR c.coop_matricula = :param OR c.coop_nome_guerra LIKE CONCAT('%' :param '%'))", nativeQuery = true)
 	List<Cooperado>findByCoopnomesCooperadoInativo(@Param(value = "param") String coopnome);
 	
@@ -61,5 +61,13 @@ public interface CooperadoRepository extends JpaRepository<Cooperado, Integer>{
 	//Busca para etiquetas
 	@Query(value = "SELECT coop_matricula FROM coop order by coop_matricula asc", nativeQuery = true)
 	List<Long> encontrarMatriculas();
-	
+	@Query(value = "SELECT * FROM coop c ORDER BY c.coop_nome ASC", nativeQuery = true)
+	List<Cooperado> listarTodosRelatorio();
+
+	@Query(value = "SELECT DISTINCT c.* FROM coop c INNER JOIN coop_cadastro e ON c.coop_matricula = e.coop_matricula WHERE UPPER(COALESCE(e.coop_cooperado, '')) = 'ATIVO' ORDER BY c.coop_nome ASC", nativeQuery = true)
+	List<Cooperado> listarAtivosRelatorio();
+
+	@Query(value = "SELECT DISTINCT c.* FROM coop c INNER JOIN coop_cadastro e ON c.coop_matricula = e.coop_matricula WHERE UPPER(COALESCE(e.coop_cooperado, '')) IN ('NAO', 'NÃO', 'INATIVO') ORDER BY c.coop_nome ASC", nativeQuery = true)
+	List<Cooperado> listarInativosRelatorio();
 }
+

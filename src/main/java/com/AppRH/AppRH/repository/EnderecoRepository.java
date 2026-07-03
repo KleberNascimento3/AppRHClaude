@@ -9,5 +9,7 @@ import com.AppRH.AppRH.models.Cooperado;
 @Repository
 public interface EnderecoRepository extends JpaRepository<Coopendereco, Long> {
 	Iterable<Coopendereco>findByCooperado(Cooperado cooperado);
+	Coopendereco findFirstByCooperadoOrderByCoopendindexcodAsc(Cooperado cooperado);
 
 }
+
