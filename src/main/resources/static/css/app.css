@@ -435,7 +435,13 @@ a:hover { color: var(--primary-dark); }
   color: var(--text-muted);
 }
 
-.pagination { margin: 0; }
+.pagination-nav { max-width: 100%; overflow-x: auto; padding-bottom: .15rem; }
+
+.pagination {
+  margin: 0;
+  flex-wrap: wrap;
+  gap: .25rem;
+}
 
 .page-link {
   border-radius: 6px !important;
@@ -445,6 +451,11 @@ a:hover { color: var(--primary-dark); }
   font-weight: 500;
   color: var(--primary);
   border-color: var(--border);
+}
+
+.pagination-ellipsis {
+  color: var(--text-muted);
+  background: transparent;
 }
 
 .page-item.active .page-link {

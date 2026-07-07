@@ -27,9 +27,10 @@ public class RelatorioPdfController {
     @GetMapping("/relatorios/pdf/cooperados")
     public void relatorioCooperados(@RequestParam(value = "status", defaultValue = "todos") String status,
                                     @RequestParam(value = "acao", defaultValue = "v") String acao,
+                                    @RequestParam(value = "ordem", defaultValue = "nome") String ordem,
                                     HttpServletResponse response) throws IOException {
         try {
-            byte[] bytes = cooperadoPdfService.gerarRelatorioCooperados(status);
+            byte[] bytes = cooperadoPdfService.gerarRelatorioCooperados(status, ordem);
             escreverPdf(response, bytes, "relatorio-cooperados-" + normalizarStatus(status) + ".pdf", acao);
         } catch (Exception e) {
             log.error("Erro ao gerar relatorio de cooperados com status {}", status, e);
@@ -43,10 +44,11 @@ public class RelatorioPdfController {
                                     @RequestParam(value = "acao", defaultValue = "v") String acao,
                                     @RequestParam(value = "modelo", defaultValue = "20") int modelo,
                                     @RequestParam(value = "matriculas", required = false) String matriculas,
+                                    @RequestParam(value = "ordem", defaultValue = "nome") String ordem,
                                     HttpServletResponse response) throws IOException {
         try {
             int modeloNormalizado = modeloEtiquetas(modelo);
-            byte[] bytes = cooperadoPdfService.gerarEtiquetasCooperados(status, modeloNormalizado, matriculas);
+            byte[] bytes = cooperadoPdfService.gerarEtiquetasCooperados(status, modeloNormalizado, matriculas, ordem);
             escreverPdf(response, bytes, "etiquetas-" + modeloNormalizado + "-cooperados-" + normalizarStatus(status) + ".pdf", acao);
         } catch (Exception e) {
             log.error("Erro ao gerar etiquetas de cooperados com status {}", status, e);

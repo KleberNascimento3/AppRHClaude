@@ -24,12 +24,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -113,6 +116,9 @@ public class CooperadoController {
 
 	@Autowired
 	private DocumentosRepository documentosRepository;
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
 	
 	//INSERE COOPERADO
 	@PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
@@ -486,6 +492,86 @@ Iterable<Coopcadastro> coopcadastroList = cc.findByCooperado(cooperado);
 	    mv.addObject("lgpd", lgpd);
 
 	    return mv;
+	}
+
+	@PreAuthorize("hasAnyRole('ADMIN','DEVELOPER','DESENVOLVEDOR')")
+	@Transactional
+	@PostMapping("/cooperado/{coopmatricula}/alterar-matricula")
+	public String alterarMatriculaCooperado(@PathVariable("coopmatricula") int matriculaAtual,
+	        @RequestParam("novaMatricula") Integer novaMatricula,
+	        RedirectAttributes attributes) {
+	    if (novaMatricula == null || novaMatricula <= 0) {
+	        attributes.addFlashAttribute("erro", "Informe uma matricula valida.");
+	        return "redirect:/cooperado/" + matriculaAtual;
+	    }
+
+	    if (matriculaAtual == novaMatricula) {
+	        attributes.addFlashAttribute("mensagem", "A matricula informada ja e a matricula atual.");
+	        return "redirect:/cooperado/" + matriculaAtual;
+	    }
+
+	    Cooperado cooperadoAtual = cr.findByCoopmatricula(matriculaAtual);
+	    if (cooperadoAtual == null) {
+	        attributes.addFlashAttribute("erro", "Cooperado nao encontrado.");
+	        return "redirect:/cooperados";
+	    }
+
+	    if (cr.findByCoopmatricula(novaMatricula) != null) {
+	        attributes.addFlashAttribute("erro", "Ja existe cooperado com a matricula informada.");
+	        return "redirect:/cooperado/" + matriculaAtual;
+	    }
+
+	    try {
+	        atualizarMatriculaNoBanco(matriculaAtual, novaMatricula);
+	        renomearArquivosMatricula(matriculaAtual, novaMatricula);
+	        registrarLogCooperado("Cooperado", "ALTERACAO", "Matricula " + matriculaAtual + " para " + novaMatricula, novaMatricula);
+	        attributes.addFlashAttribute("mensagem", "Matricula alterada com sucesso.");
+	        return "redirect:/cooperado/" + novaMatricula;
+	    } catch (Exception e) {
+	        log.error("Erro ao alterar matricula do cooperado {} para {}", matriculaAtual, novaMatricula, e);
+	        attributes.addFlashAttribute("erro", "Nao foi possivel alterar a matricula.");
+	        return "redirect:/cooperado/" + matriculaAtual;
+	    }
+	}
+
+	private void atualizarMatriculaNoBanco(int matriculaAtual, int novaMatricula) {
+	    List<String> tabelas = jdbcTemplate.queryForList(
+	            "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS "
+	                    + "WHERE TABLE_SCHEMA = DATABASE() AND COLUMN_NAME = 'coop_matricula' "
+	                    + "AND TABLE_NAME <> 'coop' ORDER BY TABLE_NAME",
+	            String.class);
+
+	    jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS=0");
+	    try {
+	        for (String tabela : tabelas) {
+	            String nomeTabela = tabela.replace("`", "");
+	            jdbcTemplate.update("UPDATE `" + nomeTabela + "` SET coop_matricula = ? WHERE coop_matricula = ?", novaMatricula, matriculaAtual);
+	        }
+	        jdbcTemplate.update("UPDATE `coop` SET coop_matricula = ? WHERE coop_matricula = ?", novaMatricula, matriculaAtual);
+	    } finally {
+	        jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS=1");
+	    }
+	}
+
+	private void renomearArquivosMatricula(int matriculaAtual, int novaMatricula) throws IOException {
+	    renomearArquivoSeExistir(fotoArquivo(matriculaAtual), fotoArquivo(novaMatricula));
+	    renomearArquivoSeExistir(fichaMatriculaArquivo(matriculaAtual), fichaMatriculaArquivo(novaMatricula));
+	    renomearArquivoSeExistir(fichaMatriculaArquivoFonte(matriculaAtual), fichaMatriculaArquivoFonte(novaMatricula));
+	}
+
+	private File fotoArquivo(int matricula) {
+	    File pasta = new File(System.getProperty("user.dir"), "target/classes/static/uploads");
+	    if (!pasta.exists()) {
+	        pasta.mkdirs();
+	    }
+	    return new File(pasta, matricula + ".jpg");
+	}
+
+	private void renomearArquivoSeExistir(File origem, File destino) throws IOException {
+	    if (origem.exists()) {
+	        Files.createDirectories(destino.toPath().getParent());
+	        Files.move(origem.toPath(), destino.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+	    }
 	}
 	//MOSTRAR DÍVIDAS
 	@PreAuthorize("hasAnyRole('ADMIN', 'USUARIO','DEVELOPER')")

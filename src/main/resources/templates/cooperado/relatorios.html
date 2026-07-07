@@ -45,14 +45,19 @@
             </button>
           </div>
           <div class="card-body border-top">
+            <label class="form-label" for="ordemRelatorio">Ordem</label>
+            <select id="ordemRelatorio" class="form-select form-select-sm mb-3">
+              <option value="nome" selected>Ordem alfabetica</option>
+              <option value="matricula">Ordem de matricula</option>
+            </select>
             <label class="form-label" for="matriculasEtiquetas">Matriculas para etiquetas</label>
             <input id="matriculasEtiquetas" class="form-control form-control-sm" type="text" placeholder="Ex.: 123,167,286,772">
           </div>
           <div class="card-body d-flex gap-2">
-            <a id="abrirPdf" href="/relatorios/pdf/cooperados?status=ativos&acao=v" target="_blank" class="btn btn-outline-primary btn-sm flex-fill">
+            <a id="abrirPdf" href="/relatorios/pdf/cooperados?status=ativos&acao=v&ordem=nome" target="_blank" class="btn btn-outline-primary btn-sm flex-fill">
               <i class="bi bi-box-arrow-up-right"></i> Abrir PDF
             </a>
-            <a id="baixarPdf" href="/relatorios/pdf/cooperados?status=ativos&acao=d" class="btn btn-primary btn-sm flex-fill">
+            <a id="baixarPdf" href="/relatorios/pdf/cooperados?status=ativos&acao=d&ordem=nome" class="btn btn-primary btn-sm flex-fill">
               <i class="bi bi-download"></i> Baixar
             </a>
           </div>
@@ -70,7 +75,7 @@
           <div style="height:72vh;min-height:520px;background:#f8fafc">
             <iframe id="pdfPreview"
                     title="Visualizacao do relatorio"
-                    src="/relatorios/pdf/cooperados?status=ativos&acao=v"
+                    src="/relatorios/pdf/cooperados?status=ativos&acao=v&ordem=nome"
                     style="width:100%;height:100%;border:0;background:white"></iframe>
           </div>
         </div>
@@ -92,19 +97,20 @@
   const titulo = document.getElementById('tituloPreview');
   const imprimir = document.getElementById('imprimirPdf');
   const matriculas = document.getElementById('matriculasEtiquetas');
+  const ordem = document.getElementById('ordemRelatorio');
 
-  function montarMatriculas(botao) {
-    if (!botao.getAttribute('data-pdf').includes('/etiquetas')) {
-      return '';
+  function montarExtras(botao) {
+    let extras = '&ordem=' + encodeURIComponent(ordem.value);
+    if (botao.getAttribute('data-pdf').includes('/etiquetas')) {
+      const valor = matriculas.value.trim();
+      extras += valor ? '&matriculas=' + encodeURIComponent(valor) : '';
     }
-    const valor = matriculas.value.trim();
-    return valor ? '&matriculas=' + encodeURIComponent(valor) : '';
+    return extras;
   }
-
   function aplicarBotao(botao, atualizarPreview) {
     const baseUrl = botao.getAttribute('data-pdf');
     const baseDownload = botao.getAttribute('data-download');
-    const extra = montarMatriculas(botao);
+    const extra = montarExtras(botao);
     const url = baseUrl + extra;
     if (atualizarPreview) {
       preview.src = url + '&t=' + new Date().getTime();
@@ -126,6 +132,13 @@
     const ativo = document.querySelector('[data-pdf].active');
     if (ativo) {
       aplicarBotao(ativo, ativo.getAttribute('data-pdf').includes('/etiquetas'));
+    }
+  });
+
+  ordem.addEventListener('change', function () {
+    const ativo = document.querySelector('[data-pdf].active');
+    if (ativo) {
+      aplicarBotao(ativo, true);
     }
   });
 

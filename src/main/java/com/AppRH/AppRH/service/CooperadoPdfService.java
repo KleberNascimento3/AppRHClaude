@@ -35,7 +35,11 @@ public class CooperadoPdfService {
     private JdbcTemplate jdbcTemplate;
 
     public byte[] gerarRelatorioCooperados(String status) {
-        List<CooperadoRelatorio> cooperados = buscarCooperados(status, null);
+        return gerarRelatorioCooperados(status, "nome");
+    }
+
+    public byte[] gerarRelatorioCooperados(String status, String ordem) {
+        List<CooperadoRelatorio> cooperados = buscarCooperados(status, null, ordem);
 
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -77,17 +81,20 @@ public class CooperadoPdfService {
             throw new IllegalStateException("Nao foi possivel gerar o relatorio de cooperados.", e);
         }
     }
-
     public byte[] gerarEtiquetasCooperados(String status) {
-        return gerarEtiquetasCooperados(status, 20, null);
+        return gerarEtiquetasCooperados(status, 20, null, "nome");
     }
 
     public byte[] gerarEtiquetasCooperados(String status, int etiquetasPorPagina) {
-        return gerarEtiquetasCooperados(status, etiquetasPorPagina, null);
+        return gerarEtiquetasCooperados(status, etiquetasPorPagina, null, "nome");
     }
 
     public byte[] gerarEtiquetasCooperados(String status, int etiquetasPorPagina, String matriculas) {
-        List<CooperadoRelatorio> cooperados = buscarCooperados(status, matriculas);
+        return gerarEtiquetasCooperados(status, etiquetasPorPagina, matriculas, "nome");
+    }
+
+    public byte[] gerarEtiquetasCooperados(String status, int etiquetasPorPagina, String matriculas, String ordem) {
+        List<CooperadoRelatorio> cooperados = buscarCooperados(status, matriculas, ordem);
 
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -124,8 +131,7 @@ public class CooperadoPdfService {
             throw new IllegalStateException("Nao foi possivel gerar as etiquetas de cooperados.", e);
         }
     }
-
-    private List<CooperadoRelatorio> buscarCooperados(String status, String matriculas) {
+    private List<CooperadoRelatorio> buscarCooperados(String status, String matriculas, String ordem) {
         String filtro = "";
         List<Integer> matriculasSelecionadas = parseMatriculas(matriculas);
 
@@ -140,9 +146,9 @@ public class CooperadoPdfService {
             filtro += "c.coop_matricula IN (" + csvMatriculas(matriculasSelecionadas) + ")";
         }
 
-        String ordem = matriculasSelecionadas.isEmpty()
-                ? " ORDER BY c.coop_nome ASC"
-                : " ORDER BY FIELD(c.coop_matricula, " + csvMatriculas(matriculasSelecionadas) + ")";
+        String ordenacao = ordenarPorMatricula(ordem)
+                ? " ORDER BY c.coop_matricula ASC"
+                : " ORDER BY c.coop_nome ASC, c.coop_matricula ASC";
 
         String sql = "SELECT c.coop_matricula, c.coop_nome, c.coop_nome_guerra, "
                 + "COALESCE(cad.coop_cooperado, '') AS coop_status, "
@@ -156,9 +162,13 @@ public class CooperadoPdfService {
                 + "LEFT JOIN coop_endereco endr ON endr.coop_end_index_cod = ("
                 + "SELECT MIN(e2.coop_end_index_cod) FROM coop_endereco e2 WHERE e2.coop_matricula = c.coop_matricula)"
                 + filtro
-                + ordem;
+                + ordenacao;
 
         return jdbcTemplate.query(sql, new CooperadoRelatorioMapper());
+    }
+
+    private boolean ordenarPorMatricula(String ordem) {
+        return "matricula".equalsIgnoreCase(ordem) || "matriculas".equalsIgnoreCase(ordem);
     }
 
     private List<Integer> parseMatriculas(String matriculas) {

@@ -33,7 +33,26 @@
         </div>
       </div>
       <div class="d-flex gap-2 flex-wrap">
+        <button class="btn btn-outline-light btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#alterarMatricula" sec:authorize="hasAnyRole('ADMIN','DEVELOPER','DESENVOLVEDOR')">
+          <i class="bi bi-123"></i> Alterar matricula
+        </button>
         <a href="/cooperados" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-left"></i> Voltar</a>
+      </div>
+    </div>
+
+    <div class="collapse mb-3" id="alterarMatricula" sec:authorize="hasAnyRole('ADMIN','DEVELOPER','DESENVOLVEDOR')">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <form th:action="@{/cooperado/{matricula}/alterar-matricula(matricula=${cooperado.coopmatricula})}" method="post" class="row g-3 align-items-end" data-loading>
+            <div class="col-md-4">
+              <label class="form-label" for="novaMatricula">Nova matricula</label>
+              <input class="form-control" id="novaMatricula" name="novaMatricula" type="number" min="1" required>
+            </div>
+            <div class="col-md-auto">
+              <button class="btn btn-primary" type="submit"><i class="bi bi-check2"></i> Salvar matricula</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
 

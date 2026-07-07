@@ -90,10 +90,7 @@
                    class="btn btn-sm btn-outline-primary" title="Ver detalhes">
                   <i class="bi bi-eye"></i>
                 </a>
-                <a th:href="${(#mvc.url('CC#editarCooperado').arg(0, cooperado.coopmatricula)).build()}"
-                   class="btn btn-sm btn-outline-secondary" title="Editar">
-                  <i class="bi bi-pencil"></i>
-                </a>
+
                 <a th:href="${(#mvc.url('CC#deletarCooperado').arg(0, cooperado.coopmatricula)).build()}"
                    th:attr="data-confirm-delete=${cooperado.coopnome}"
                    class="btn btn-sm btn-outline-danger"
@@ -118,14 +115,22 @@
       <!-- Pagination -->
       <div th:if="${totalPages != null and totalPages > 1}" class="pagination-wrapper">
         <span>Total: <strong th:text="${totalItems}">0</strong> registros</span>
-        <nav>
+        <nav class="pagination-nav"
+             th:with="startPage=${currentPage > 3 ? currentPage - 2 : 1}, endPage=${currentPage + 2 < totalPages ? currentPage + 2 : totalPages}">
           <ul class="pagination pagination-sm">
+            <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
+              <a class="page-link" th:href="@{'/cooperados/1/' + ${contextPath}}">Primeira</a>
+            </li>
             <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
               <a class="page-link"
                  th:href="@{'/cooperados/' + ${currentPage - 1} + '/' + ${contextPath}}">&laquo;</a>
             </li>
 
-            <th:block th:each="i : ${#numbers.sequence(1, totalPages)}">
+            <li class="page-item disabled" th:if="${startPage > 1}">
+              <span class="page-link pagination-ellipsis">...</span>
+            </li>
+
+            <th:block th:each="i : ${#numbers.sequence(startPage, endPage)}">
               <li class="page-item" th:classappend="${currentPage == i} ? 'active'">
                 <a class="page-link"
                    th:href="@{'/cooperados/' + ${i} + '/' + ${contextPath}}"
@@ -133,13 +138,20 @@
               </li>
             </th:block>
 
+            <li class="page-item disabled" th:if="${endPage < totalPages}">
+              <span class="page-link pagination-ellipsis">...</span>
+            </li>
+
             <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
               <a class="page-link"
                  th:href="@{'/cooperados/' + ${currentPage + 1} + '/' + ${contextPath}}">&raquo;</a>
             </li>
+            <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
+              <a class="page-link" th:href="@{'/cooperados/' + ${totalPages} + '/' + ${contextPath}}">Ultima</a>
+            </li>
           </ul>
         </nav>
-        <span>Página <strong th:text="${currentPage}">1</strong> de <strong th:text="${totalPages}">1</strong></span>
+        <span>Pagina <strong th:text="${currentPage}">1</strong> de <strong th:text="${totalPages}">1</strong></span>
       </div>
     </div>
 
